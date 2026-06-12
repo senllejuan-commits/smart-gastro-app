@@ -1,0 +1,171 @@
+const today = new Date()
+const dateInDays = (days) => {
+  const date = new Date(today)
+  date.setDate(date.getDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
+export const seedData = {
+  suppliers: [
+    {
+      id: 'sup-1',
+      name: 'Carnes del Sur',
+      category: 'carnes',
+      phone: '011-4567-9001',
+      email: 'ventas@carnesdelsur.com',
+      ingredientIds: ['ing-2'],
+      referencePrice: 62000,
+    },
+    {
+      id: 'sup-2',
+      name: 'Verdulería Central',
+      category: 'verduras',
+      phone: '011-4555-1818',
+      email: 'pedidos@verduleria-central.com',
+      ingredientIds: ['ing-4', 'ing-5'],
+      referencePrice: 18500,
+    },
+    {
+      id: 'sup-3',
+      name: 'Panificados Norte',
+      category: 'panificados',
+      phone: '011-4411-2200',
+      email: 'contacto@panificadosnorte.com',
+      ingredientIds: ['ing-1'],
+      referencePrice: 26000,
+    },
+    {
+      id: 'sup-4',
+      name: 'Lácteos Argentinos',
+      category: 'lácteos',
+      phone: '011-4300-8833',
+      email: 'compras@lacteosargentinos.com',
+      ingredientIds: ['ing-3', 'ing-7'],
+      referencePrice: 34000,
+    },
+  ],
+  ingredients: [
+    {
+      id: 'ing-1',
+      name: 'Pan de hamburguesa',
+      unit: 'unidad',
+      stock: 100,
+      minStock: 20,
+      expiryDate: dateInDays(18),
+      supplierId: 'sup-3',
+    },
+    {
+      id: 'ing-2',
+      name: 'Carne',
+      unit: 'gr',
+      stock: 10000,
+      minStock: 3000,
+      expiryDate: dateInDays(6),
+      supplierId: 'sup-1',
+    },
+    {
+      id: 'ing-3',
+      name: 'Queso',
+      unit: 'unidad',
+      stock: 80,
+      minStock: 15,
+      expiryDate: dateInDays(12),
+      supplierId: 'sup-4',
+    },
+    {
+      id: 'ing-4',
+      name: 'Tomate',
+      unit: 'gr',
+      stock: 5000,
+      minStock: 1000,
+      expiryDate: dateInDays(4),
+      supplierId: 'sup-2',
+    },
+    {
+      id: 'ing-5',
+      name: 'Lechuga',
+      unit: 'gr',
+      stock: 3000,
+      minStock: 800,
+      expiryDate: dateInDays(5),
+      supplierId: 'sup-2',
+    },
+    {
+      id: 'ing-6',
+      name: 'Café',
+      unit: 'gr',
+      stock: 2000,
+      minStock: 500,
+      expiryDate: dateInDays(40),
+      supplierId: '',
+    },
+    {
+      id: 'ing-7',
+      name: 'Leche',
+      unit: 'ml',
+      stock: 10000,
+      minStock: 2000,
+      expiryDate: dateInDays(7),
+      supplierId: 'sup-4',
+    },
+  ],
+  products: [
+    {
+      id: 'prod-1',
+      code: 'HAMB001',
+      name: 'Hamburguesa clásica',
+      price: 8500,
+      category: 'comida',
+      recipe: [
+        { ingredientId: 'ing-1', quantity: 1 },
+        { ingredientId: 'ing-2', quantity: 150 },
+        { ingredientId: 'ing-3', quantity: 1 },
+        { ingredientId: 'ing-4', quantity: 30 },
+        { ingredientId: 'ing-5', quantity: 20 },
+      ],
+    },
+    {
+      id: 'prod-2',
+      code: 'CAF001',
+      name: 'Café con leche',
+      price: 2900,
+      category: 'cafetería',
+      recipe: [
+        { ingredientId: 'ing-6', quantity: 20 },
+        { ingredientId: 'ing-7', quantity: 180 },
+      ],
+    },
+    {
+      id: 'prod-3',
+      code: 'ENS001',
+      name: 'Ensalada simple',
+      price: 6200,
+      category: 'comida',
+      recipe: [
+        { ingredientId: 'ing-4', quantity: 120 },
+        { ingredientId: 'ing-5', quantity: 100 },
+        { ingredientId: 'ing-3', quantity: 1 },
+      ],
+    },
+  ],
+  purchases: [
+    {
+      id: 'pur-1',
+      date: dateInDays(-3),
+      supplierId: 'sup-1',
+      ingredientId: 'ing-2',
+      quantity: 6000,
+      totalPrice: 68000,
+      expiryDate: dateInDays(6),
+    },
+  ],
+  sales: [
+    {
+      id: 'sale-1',
+      date: dateInDays(-1),
+      productId: 'prod-1',
+      quantity: 4,
+    },
+  ],
+  stockWarnings: [],
+}

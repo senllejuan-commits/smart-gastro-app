@@ -1,0 +1,130 @@
+ATRIBUTOS ACTUALIZADOS DE SMART GASTRO APP
+
+Smart Gastro APP es un MVP pensado para restaurantes que necesitan ordenar su gestion diaria de stock, compras, ventas, vencimientos, desperdicio y rentabilidad. La aplicacion permite cargar informacion operativa y transformarla en indicadores simples para tomar mejores decisiones.
+
+1. Control de ingredientes
+
+- Permite cargar ingredientes con codigo, nombre, familia de alimento, unidad de medida, stock actual, stock minimo y costo unitario.
+- Separa los ingredientes en alimentos criticos y no criticos.
+- Considera como criticos a los alimentos perecederos, por ejemplo lacteos, verduras, panificados y proteinas.
+- Permite editar o eliminar ingredientes cargados.
+- Usa unidades homogeneas: kg, gr, ml y unidad.
+
+2. Control de vencimientos
+
+- Permite registrar el vencimiento de cada paquete o lote comprado.
+- Para alimentos con vencimiento definido por paquete, como cafe o leche, se carga la fecha real indicada por el envase.
+- Para alimentos frescos, utiliza criterios estimativos:
+  - Tomate: 7 dias.
+  - Lechuga: 7 dias.
+  - Queso refrigerado: 15 dias.
+  - Carne: 6 dias.
+- El sistema ayuda a detectar alimentos proximos a vencer y posibles desperdicios.
+
+3. Gestion de productos
+
+- Permite crear productos de venta con codigo, nombre, categoria y precio.
+- Cada producto puede tener una receta compuesta por todos los ingredientes necesarios.
+- Calcula el costo estimado del producto a partir de los ingredientes utilizados.
+- Permite editar o eliminar productos.
+
+4. Gestion de proveedores
+
+- Permite cargar proveedores con datos basicos y precios de referencia.
+- Permite editar o eliminar proveedores.
+- Ayuda a vincular la compra de insumos con su origen.
+
+5. Registro de compras
+
+- Permite registrar compras con fecha, ingrediente, cantidad comprada, precio total pagado y vencimiento del lote.
+- La cantidad comprada respeta la unidad definida en Ingredientes.
+- Calcula el costo unitario real de compra.
+- Actualiza el stock automaticamente cuando se registra una compra.
+- Permite editar o eliminar compras si hubo errores de carga.
+- Incluye recomendaciones de compra futura antes del historial de compras.
+- Permite filtrar compras por periodos y descargar reportes.
+- Permite marcar una compra como urgente y registrar el motivo.
+- Mide el impacto de las compras urgentes: cantidad, peso sobre el total, total pagado y sobrecosto estimado.
+- Ayuda a detectar compras fuera de plan para anticiparlas mejor en futuras recomendaciones.
+
+6. Registro de ventas
+
+- Permite registrar ventas por fecha, producto y cantidad vendida.
+- Al registrar una venta, descuenta automaticamente del stock los ingredientes que componen el producto.
+- Muestra conteo de productos vendidos.
+- Permite editar o eliminar ventas si hubo errores de carga.
+- Incluye filtros por fecha y descarga de reportes.
+
+7. Dashboard operativo
+
+- Muestra un resumen del estado general del negocio.
+- Incluye ventas, rendimiento, stock, compras, vencimientos, desperdicio y eventos.
+- Permite analizar el comportamiento con datos historicos.
+- Ayuda a detectar quiebres de stock y alimentos en riesgo.
+
+8. Seguimiento de objetivos
+
+- Permite cargar una linea base previa a la instalacion de la aplicacion.
+- Incluye un historial previo simulado de 60 dias con compras urgentes, sobrecompras, desperdicios y quiebres.
+- Incluye ventas previas simuladas de 60 dias para comprender la demanda y generar predicciones.
+- Incluye compras simuladas post implementacion desde el 01/05/2026 para mostrar la mejora inicial.
+- Mide tres objetivos principales: reducir quiebres de stock, reducir desperdicio de perecederos y reducir compras imprevistas o urgentes.
+- Calcula el avance logrado contra la meta esperada a 6 meses.
+- Compara la situacion actual con la linea base inicial.
+- Ayuda a justificar si la aplicacion genera impacto operativo real en el negocio.
+
+9. Panel ejecutivo
+
+- Presenta informacion resumida para una mirada gerencial.
+- Permite filtrar indicadores por hoy, ultimos 7 dias, ultimos 30 dias, ultimos 90 dias o todo el historial.
+- Muestra facturacion, margen estimado, unidades vendidas, productos destacados y alertas actuales.
+- Incluye descarga de reportes.
+
+10. Reporte de quiebres de stock
+
+- Detecta ingredientes con stock bajo o sin stock suficiente.
+- Muestra productos afectados por esos faltantes.
+- Ayuda a anticipar compras y evitar perdida de ventas.
+
+11. Analisis de desperdicio
+
+- Reemplaza el concepto de merma por desperdicio.
+- Detecta materia prima que puede perderse por vencimiento.
+- Ayuda a priorizar el uso de ingredientes proximos a vencer.
+
+12. Recomendaciones IA
+
+- Genera recomendaciones simples en base a ventas, stock, vencimientos, eventos y desperdicio.
+- Usa el historial de ventas para detectar tendencias.
+- Propone acciones para preparar stock y mejorar la gestion.
+- Incluye eventos importantes, feriados, fechas patrias y partidos relevantes como disparadores de demanda.
+
+13. Prediccion de ventas
+
+- Usa el historial de ventas cargado para estimar demanda futura.
+- Permite ejercitar la funcion principal del MVP: aprender de ventas pasadas para sugerir decisiones.
+- Ayuda a proyectar compras y necesidades de stock.
+
+14. Reportes descargables
+
+- Permite descargar reportes desde Panel ejecutivo, Compras y Ventas.
+- Los reportes sirven para compartir informacion con socios, docentes, encargados o duenos del restaurante.
+
+15. Personalizacion
+
+- El MVP puede adaptarse a distintos tipos de locales gastronomicos.
+- Se puede modificar el formato visual, los productos, los ingredientes, los criterios de vencimiento, los reportes y las reglas de decision.
+- Esta pensado como una base funcional editable segun las necesidades del cliente.
+
+16. Valor para el restaurante
+
+- Ayuda a reducir quiebres de stock.
+- Ayuda a reducir desperdicio de insumos perecederos.
+- Ordena compras y ventas en un solo lugar.
+- Mejora la lectura de rentabilidad por producto.
+- Permite tomar decisiones con datos en lugar de depender solo de intuicion.
+- Facilita la preparacion ante fechas de mayor demanda.
+
+Descripcion breve para presentar el MVP
+
+Smart Gastro APP es una aplicacion web para restaurantes que permite gestionar ingredientes, productos, proveedores, compras y ventas. A partir de esos datos, calcula stock, costos, margenes, vencimientos, desperdicios, quiebres de stock y recomendaciones de compra. Su objetivo principal es ayudar al negocio a anticiparse a la demanda, reducir perdidas y mejorar la rentabilidad mediante informacion clara y accionable.

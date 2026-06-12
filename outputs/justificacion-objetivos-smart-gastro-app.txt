@@ -1,0 +1,110 @@
+JUSTIFICACION DE OBJETIVOS - SMART GASTRO APP
+
+Estos objetivos se pueden justificar porque la aplicacion permite transformar datos operativos del restaurante en decisiones concretas. Smart Gastro APP ayuda a controlar stock, anticipar compras, reducir desperdicio, analizar ventas, calcular margenes y proyectar demanda.
+
+Por eso, los objetivos no son deseos aislados, sino metas medibles asociadas a funcionalidades concretas del sistema.
+
+Para comprobar los porcentajes, la aplicacion debe trabajar con una linea base previa a la instalacion. La fecha de implementacion definida para el MVP es el 01/05/2026. Primero se registra o estima la situacion anterior del local: quiebres de stock mensuales, desperdicio mensual de perecederos y compras urgentes mensuales. En el MVP se incorpora un historial previo simulado de 60 dias con compras problematicas y ventas previas para mostrar esa situacion inicial y explicar la demanda que originaba esas compras. Luego se simula el periodo post implementacion desde el 01/05/2026, donde las compras empiezan a ordenarse gracias a alertas, historial, vencimientos y predicciones. La comparacion entre la linea base y la medicion posterior permite evaluar si se alcanzo la reduccion esperada.
+
+
+1. Disminuir un 30% los quiebres de stock en los proximos 6 meses
+
+Este objetivo se justifica porque la app permite controlar el stock actual, definir stock minimo por ingrediente y generar alertas cuando un insumo esta por debajo del nivel necesario.
+
+Ademas, como las ventas descuentan automaticamente los ingredientes segun la receta, el sistema permite detectar que productos pueden quedarse sin materia prima antes de que ocurra el quiebre.
+
+Indicadores para medirlo:
+
+- cantidad de quiebres de stock por mes;
+- cantidad de productos que no pudieron venderse por falta de insumos;
+- ingredientes en estado critico;
+- alertas de stock bajo generadas por el sistema.
+
+Justificacion oral:
+
+Este objetivo es posible porque la aplicacion permite anticipar faltantes de materia prima mediante alertas de stock minimo, reportes de quiebre y relacion directa entre ventas, recetas e ingredientes.
+
+
+2. Reducir un 40% el desperdicio de insumos perecederos en los proximos 6 meses
+
+Este objetivo se justifica porque la app registra vencimientos por lote o paquete, separa alimentos criticos y permite visualizar que insumos estan proximos a vencer.
+
+Tambien ayuda a identificar productos perecederos como lacteos, verduras, panificados y proteinas, que son los mas sensibles al desperdicio.
+
+Indicadores para medirlo:
+
+- cantidad de insumos vencidos;
+- valor economico del desperdicio;
+- lotes proximos a vencer;
+- desperdicio por tipo de ingrediente;
+- alertas de vencimiento generadas.
+
+Justificacion oral:
+
+La reduccion del desperdicio se logra porque el sistema permite controlar vencimientos, detectar lotes en riesgo y priorizar el uso de insumos perecederos antes de que pierdan valor.
+
+
+3. Reducir en un 25% la frecuencia de compras imprevistas y urgentes en los proximos 6 meses
+
+Recomendacion: este objetivo conviene dejarlo, porque esta muy conectado con la logica de la aplicacion.
+
+Se justifica porque la app combina stock actual, ventas historicas, prediccion de demanda, eventos importantes y compras sugeridas. Eso permite planificar mejor y depender menos de compras de ultimo momento.
+
+Indicadores para medirlo:
+
+- cantidad de compras urgentes por mes;
+- compras realizadas fuera de planificacion;
+- compras generadas por quiebre de stock;
+- diferencia entre compras planificadas y compras reales.
+
+Justificacion oral:
+
+Este objetivo se sostiene porque la app ayuda a anticipar necesidades de abastecimiento. Al tener alertas de stock, prediccion de ventas y eventos proximos, el local puede comprar con planificacion y no reaccionar tarde.
+
+
+4. Aumentar la satisfaccion del cliente en un 15% en los proximos 8 meses
+
+Este objetivo se justifica de forma indirecta, pero valida.
+
+Si hay menos quiebres de stock, menos productos faltantes y mejor planificacion, el cliente tiene mas chances de encontrar disponible lo que quiere comprar.
+
+La app no mide satisfaccion directamente, pero ayuda a mejorar factores que impactan en la experiencia del cliente.
+
+Indicadores para medirlo:
+
+- encuestas de satisfaccion;
+- reclamos por productos no disponibles;
+- cantidad de productos faltantes en carta;
+- resenas o comentarios;
+- tasa de recompra.
+
+Justificacion oral:
+
+La satisfaccion del cliente puede mejorar porque el sistema ayuda a mantener disponibilidad de productos, reducir faltantes y sostener una operacion mas ordenada. Un cliente que encuentra lo que busca y recibe un servicio mas estable tiene una mejor experiencia.
+
+
+5. Aumentar la rentabilidad del local en un 10% en los proximos 10 meses
+
+Este es uno de los objetivos mas fuertes.
+
+Se justifica porque la app calcula costos de confeccion, precio de venta, margen por producto, facturacion, productos mas vendidos y desperdicio. Todo eso permite tomar decisiones para vender mejor y gastar menos.
+
+Indicadores para medirlo:
+
+- margen por producto;
+- margen total mensual;
+- costo de insumos;
+- desperdicio valorizado;
+- rentabilidad por linea de producto;
+- facturacion comparada contra costos.
+
+Justificacion oral:
+
+La rentabilidad puede aumentar porque la aplicacion permite identificar que productos dejan mejor margen, controlar costos, reducir desperdicio y evitar compras urgentes que suelen ser mas caras. La mejora no viene solo por vender mas, sino por gestionar mejor.
+
+
+CIERRE GENERAL
+
+Estos objetivos se justifican porque Smart Gastro APP conecta compras, stock, ventas, recetas, vencimientos, desperdicio y rentabilidad en un solo sistema.
+
+La aplicacion permite tomar decisiones basadas en datos y no solamente en intuicion. Por eso, las metas propuestas son alcanzables y medibles: menos quiebres, menos desperdicio, menos compras urgentes, mejor experiencia para el cliente y mayor rentabilidad.

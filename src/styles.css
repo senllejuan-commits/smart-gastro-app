@@ -1,0 +1,444 @@
+:root {
+  color: #17211d;
+  background: #f6f7f4;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  align-items: center;
+  background: #1f6f55;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+}
+
+button:hover {
+  background: #175944;
+}
+
+input,
+select {
+  background: #fff;
+  border: 1px solid #d8ded6;
+  border-radius: 8px;
+  color: #17211d;
+  min-height: 40px;
+  padding: 9px 11px;
+  width: 100%;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+}
+
+label span,
+.check-list > span {
+  color: #56635d;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e2e6df;
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: #56635d;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 268px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: #17211d;
+  color: #fff;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding: 22px 16px;
+}
+
+.brand {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.brand-mark {
+  align-items: center;
+  background: #eab14d;
+  border-radius: 8px;
+  color: #17211d;
+  display: inline-flex;
+  font-weight: 900;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.brand small {
+  color: #aeb9b4;
+  display: block;
+  margin-top: 3px;
+}
+
+.nav-item {
+  background: transparent;
+  border-radius: 8px;
+  color: #d6ded8;
+  justify-content: flex-start;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: #26362f;
+  color: #fff;
+}
+
+.main {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.topbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.topbar h1 {
+  font-size: clamp(1.7rem, 2.2vw, 2.35rem);
+  line-height: 1.1;
+  margin: 2px 0 0;
+}
+
+.eyebrow {
+  color: #718079;
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.secondary-button {
+  background: #fff;
+  border: 1px solid #d8ded6;
+  color: #1f6f55;
+}
+
+.secondary-button:hover {
+  background: #edf3ef;
+}
+
+.mobile-tabs {
+  display: none;
+}
+
+.chip {
+  background: #fff;
+  border: 1px solid #d8ded6;
+  color: #33433b;
+  min-height: 34px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.chip.active {
+  background: #1f6f55;
+  color: #fff;
+}
+
+.notice {
+  background: #e7f5ee;
+  border: 1px solid #b7dfcd;
+  border-radius: 8px;
+  color: #14573f;
+  font-weight: 700;
+  padding: 12px 14px;
+}
+
+.page-grid,
+.content-split {
+  display: grid;
+  gap: 18px;
+}
+
+.content-split {
+  align-items: start;
+  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+}
+
+.metrics-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(6, minmax(140px, 1fr));
+}
+
+.metric,
+.panel {
+  background: #fff;
+  border: 1px solid #e0e5dd;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(21, 32, 26, 0.06);
+}
+
+.metric {
+  display: grid;
+  gap: 10px;
+  min-height: 126px;
+  padding: 16px;
+}
+
+.metric span {
+  color: #5f6d66;
+  font-weight: 700;
+}
+
+.metric strong {
+  font-size: 2rem;
+}
+
+.metric-icon {
+  align-items: center;
+  background: #e8f3ee;
+  border-radius: 8px;
+  color: #1f6f55;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.metric.danger .metric-icon {
+  background: #fdeceb;
+  color: #b3392e;
+}
+
+.metric.warning .metric-icon {
+  background: #fff2d7;
+  color: #9d6a05;
+}
+
+.panel {
+  min-width: 0;
+  padding: 18px;
+}
+
+.panel h2 {
+  font-size: 1.08rem;
+  margin: 0 0 14px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 13px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.row-actions {
+  min-width: 136px;
+  white-space: nowrap;
+}
+
+.text-button {
+  background: transparent;
+  color: #1f6f55;
+  min-height: auto;
+  padding: 4px 7px;
+}
+
+.text-button:hover {
+  background: #e8f3ee;
+}
+
+.text-button.danger {
+  color: #b3392e;
+}
+
+.text-button.danger:hover {
+  background: #fdeceb;
+}
+
+.critical-row {
+  background: #fff7f3;
+}
+
+.alerts-list,
+.suggestion-list,
+.recommendations,
+.recipe-list,
+.check-list {
+  display: grid;
+  gap: 10px;
+}
+
+.alert,
+.suggestion,
+.recommendation {
+  border: 1px solid #e0e5dd;
+  border-left: 4px solid #1f6f55;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.alert span,
+.suggestion span,
+.recommendation span {
+  color: #5e6d66;
+}
+
+.alert.stock,
+.alert.warning {
+  border-left-color: #b3392e;
+}
+
+.alert.expiry {
+  border-left-color: #eab14d;
+}
+
+.alert.purchase {
+  border-left-color: #1f6f55;
+}
+
+.suggestion {
+  background: #fbfcfa;
+}
+
+.recommendation {
+  align-items: center;
+  display: flex;
+}
+
+.recipe-row {
+  align-items: end;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(180px, 1fr) 110px 60px auto;
+}
+
+.check-list label {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.check-list input {
+  min-height: auto;
+  width: auto;
+}
+
+.inline-warning {
+  background: #fff5e1;
+  border: 1px solid #f3d28d;
+  border-radius: 8px;
+  color: #7c5205;
+  display: grid;
+  gap: 5px;
+  padding: 10px 12px;
+}
+
+.empty-state {
+  color: #718079;
+  margin: 0;
+}
+
+@media (max-width: 1180px) {
+  .metrics-grid {
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 880px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    padding: 18px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mobile-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .content-split,
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-row {
+    grid-template-columns: 1fr 100px 54px;
+  }
+
+  .recipe-row button {
+    grid-column: 1 / -1;
+  }
+}

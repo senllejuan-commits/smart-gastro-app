@@ -1,0 +1,187 @@
+MODELO DE COBRO - SMART GASTRO APP
+
+Para una aplicacion de este estilo, no conviene cobrarla como si fuera solamente un archivo o una plantilla cerrada.
+
+La mejor forma de cobrarla es como una combinacion de:
+
+1. Implementacion inicial.
+2. Abono mensual.
+3. Personalizaciones extra.
+
+Esto tiene sentido porque el valor de Smart Gastro APP no esta solamente en la aplicacion, sino en adaptarla al funcionamiento real de cada negocio gastronomico.
+
+
+1. SETUP INICIAL / IMPLEMENTACION
+
+El setup inicial se cobra una sola vez.
+
+Incluye:
+
+- adaptar la app al cliente;
+- cargar logo, colores y nombre del local;
+- configurar ingredientes iniciales;
+- cargar productos y recetas;
+- cargar proveedores;
+- ajustar unidades de medida;
+- configurar stock minimo;
+- definir reportes;
+- explicar como usarla.
+
+Esto es importante porque cada restaurante trabaja distinto. No es lo mismo una hamburgueseria, una cafeteria, una parrilla o una rotiseria.
+
+Forma de explicarlo:
+
+El setup inicial cubre la adaptacion de Smart Gastro APP al funcionamiento real del local.
+
+
+2. ABONO MENSUAL
+
+El abono mensual es recomendable dejarlo siempre.
+
+Incluye:
+
+- soporte;
+- correcciones;
+- ajustes menores;
+- nuevas funcionalidades;
+- backup o acompanamiento;
+- mantenimiento;
+- mejoras del sistema;
+- cambios en reportes;
+- ayuda para interpretar datos.
+
+Esto es clave porque si la app se vende una sola vez, despues el cliente puede pedir cambios constantemente sin que eso este contemplado.
+
+Forma de explicarlo:
+
+El abono mensual no es solo por usar la app, sino por tener acompanamiento, mantenimiento y evolucion del sistema.
+
+
+3. PERSONALIZACIONES EXTRA
+
+Las personalizaciones mas grandes se cobran aparte.
+
+Ejemplos:
+
+- agregar un modulo nuevo;
+- hacer un reporte especial;
+- cambiar el diseno completo;
+- agregar usuarios;
+- conectar con una base de datos;
+- hacer una version online;
+- cargar grandes volumenes de datos;
+- agregar login;
+- conectar con Excel, Google Sheets o un sistema POS.
+
+Forma de explicarlo:
+
+Las personalizaciones especificas se presupuestan aparte segun el alcance.
+
+
+PAQUETES SUGERIDOS
+
+PLAN MVP PERSONALIZADO
+
+Pensado para negocios chicos que quieren probar la herramienta.
+
+Incluye:
+
+- app personalizada;
+- carga inicial basica;
+- reportes principales;
+- soporte limitado;
+- ajustes menores.
+
+Forma de cobro:
+
+- setup inicial bajo;
+- abono mensual bajo.
+
+
+PLAN GESTION GASTRONOMICA
+
+Pensado para locales que realmente quieren usar la aplicacion como herramienta de gestion.
+
+Incluye:
+
+- todo lo anterior;
+- carga mas completa de productos;
+- panel ejecutivo;
+- reportes;
+- predicciones;
+- seguimiento mensual;
+- ajustes funcionales.
+
+Forma de cobro:
+
+- setup inicial medio;
+- abono mensual medio.
+
+
+PLAN A MEDIDA
+
+Pensado para clientes que quieren algo muy personalizado.
+
+Incluye:
+
+- modulos especiales;
+- diseno a medida;
+- reportes personalizados;
+- integracion futura;
+- acompanamiento mas fuerte.
+
+Forma de cobro:
+
+- setup inicial alto;
+- abono mensual mas alto;
+- cambios importantes cotizados aparte.
+
+
+RECOMENDACION COMERCIAL
+
+La mejor forma de vender Smart Gastro APP seria:
+
+Implementacion inicial: se cobra una vez.
+Uso y soporte: se cobra mensual.
+Cambios grandes: se cotizan aparte.
+
+Este modelo es equilibrado porque permite cobrar el trabajo inicial, pero tambien sostener el mantenimiento y la evolucion de la aplicacion.
+
+
+POR QUE NO COBRAR SOLO UNA VEZ
+
+No conviene cobrar la aplicacion una sola vez porque:
+
+- el cliente puede pedir cambios infinitos;
+- no se cobra el mantenimiento;
+- no se cobra el soporte;
+- la app puede quedar desactualizada;
+- el tiempo de desarrollo no escala;
+- cada cliente puede necesitar adaptaciones distintas.
+
+En cambio, con un abono mensual, el cliente entiende que esta pagando por una herramienta viva, que se puede mantener y mejorar.
+
+
+ARGUMENTO DE VENTA
+
+Smart Gastro APP no es una plantilla cerrada. Es una solucion adaptable al funcionamiento real de cada restaurante.
+
+Por eso se cobra una implementacion inicial para configurar el sistema y un abono mensual para mantenerlo, acompanar al cliente y seguir mejorandolo.
+
+
+IDEA CENTRAL PARA EXPLICAR A COMPANEROS
+
+La aplicacion no se cobra solamente por existir, sino por el valor que genera:
+
+- ordena la operacion;
+- reduce errores;
+- mejora el control de stock;
+- ayuda a evitar desperdicio;
+- permite entender margenes;
+- genera reportes;
+- permite tomar decisiones con datos;
+- se puede adaptar a cada cliente.
+
+Por eso, el modelo mas conveniente es hibrido:
+
+SETUP INICIAL + ABONO MENSUAL + PERSONALIZACIONES EXTRA.

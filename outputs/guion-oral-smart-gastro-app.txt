@@ -1,0 +1,232 @@
+GUION ORAL - SMART GASTRO APP
+
+1. Problema que resuelve
+
+La aplicacion esta pensada para restaurantes, bares o negocios gastronomicos que tienen un problema muy comun: compran, venden y usan materia prima, pero muchas veces no tienen una vision clara de que esta pasando con sus costos, stock, desperdicio y rentabilidad.
+
+El objetivo es transformar datos simples del dia a dia en informacion util para tomar mejores decisiones.
+
+2. Control de ingredientes
+
+La app permite cargar ingredientes con:
+
+- codigo propio;
+- unidad de medida;
+- stock actual;
+- stock minimo;
+- costo unitario;
+- proveedor;
+- vencimiento;
+- criterio de vencimiento por paquete o por vida util estimada;
+- clasificacion entre alimento critico y no critico.
+
+Esto ayuda a ordenar la materia prima y saber que productos requieren mas atencion.
+
+El vencimiento se puede manejar de dos formas:
+
+- por fecha real del paquete, como cafe o leche;
+- por vida util estimada, como tomate, lechuga, queso o carne.
+
+Por ejemplo, el sistema puede tomar tomate y lechuga con 7 dias, queso con 15 dias refrigerado y carne con 6 dias.
+
+3. Control de compras
+
+Cada compra queda registrada con:
+
+- fecha;
+- ingrediente comprado;
+- cantidad;
+- precio total pagado;
+- vencimiento del lote.
+
+Esto permite entender cuanto se compro, a que precio y que lote puede vencer primero.
+
+Ademas, la seccion Compras no funciona solamente como historial. Tambien incluye recomendaciones de compra futura, calculadas a partir de:
+
+- prediccion de ventas;
+- recetas de los productos;
+- stock actual;
+- stock minimo;
+- costo unitario de cada ingrediente;
+- productos afectados.
+
+Esto permite responder a exigencias futuras y planificar compras antes de que aparezca una urgencia.
+
+4. Control de ventas
+
+La app permite cargar ventas por producto y descuenta automaticamente los ingredientes usados segun la receta.
+
+Esto es clave porque conecta la venta con el consumo real de materia prima.
+
+5. Productos y recetas
+
+Cada producto puede tener una receta asociada. Por ejemplo, una hamburguesa puede estar compuesta por pan, carne, queso, tomate y lechuga.
+
+Con eso, la app calcula:
+
+- costo de confeccion;
+- precio de venta;
+- margen estimado;
+- rentabilidad por producto.
+
+6. Rentabilidad
+
+La aplicacion no solo dice cuanto vendiste. Tambien muestra cuanto margen genero cada producto.
+
+Esto ayuda a responder preguntas como:
+
+- Que producto vende mas?
+- Que producto deja mas margen?
+- Que producto parece rentable pero consume demasiados insumos?
+- Que conviene potenciar?
+
+7. Panel Ejecutivo
+
+El Panel Ejecutivo esta pensado para el dueno o encargado.
+
+Permite ver:
+
+- facturacion;
+- margen;
+- unidades vendidas;
+- productos mas vendidos;
+- precio promedio vendido;
+- alertas actuales.
+
+Ademas tiene filtros por periodo:
+
+- hoy;
+- 7 dias;
+- 30 dias;
+- 90 dias;
+- todo el historial.
+
+8. Dashboard operativo
+
+El Dashboard esta dividido para que no sea confuso:
+
+- resumen;
+- ventas y prediccion;
+- stock y compras;
+- vencimientos y desperdicio;
+- eventos.
+
+Esto separa la mirada operativa de la mirada ejecutiva.
+
+9. Alertas de stock
+
+La app detecta ingredientes con stock bajo o riesgo de quiebre.
+
+Esto permite anticiparse antes de quedarse sin materia prima y evitar perder ventas.
+
+10. Desperdicio y vencimientos
+
+El sistema analiza los lotes cargados y avisa si hay productos vencidos o proximos a vencer.
+
+Esto ayuda a reducir desperdicio de materia prima, que en gastronomia impacta directamente en la rentabilidad.
+
+11. Prediccion IA de ventas
+
+Una de las funciones principales es que la app usa el historial de ventas para generar predicciones.
+
+Muestra:
+
+- venta estimada para manana;
+- facturacion estimada;
+- margen estimado;
+- tendencia por producto;
+- posible impacto de eventos cercanos.
+
+Esto permite planificar compras y stock con mayor criterio.
+
+12. Recomendaciones de compra futura
+
+La aplicacion traduce la prediccion de ventas en necesidades concretas de compra.
+
+Por ejemplo, si el sistema estima que durante los proximos 7 dias van a venderse determinados productos, cruza esa informacion con las recetas y calcula que ingredientes pueden faltar.
+
+La app muestra:
+
+- ingrediente recomendado;
+- necesidad estimada para 7 dias;
+- stock actual;
+- cantidad sugerida de compra;
+- costo estimado;
+- motivo de la recomendacion;
+- productos afectados.
+
+Este atributo es clave porque transforma la informacion en una accion concreta: que comprar, cuanto comprar y por que.
+
+13. Eventos importantes
+
+La app incluye eventos relevantes, como fechas patrias y partidos importantes, para anticipar posibles aumentos de demanda.
+
+La idea es que el restaurante pueda prepararse antes, no despues.
+
+14. Reportes descargables
+
+La aplicacion permite descargar reportes en:
+
+- Panel Ejecutivo;
+- Compras;
+- Ventas.
+
+Esto sirve para compartir informacion, analizarla en Excel o presentarla a un dueno, socio o encargado.
+
+15. Filtros por periodo
+
+La app permite analizar la informacion por distintos periodos:
+
+- hoy;
+- 7 dias;
+- 30 dias;
+- 90 dias;
+- todo el historial.
+
+Esto aparece en Panel Ejecutivo, Compras y Ventas, y permite comparar resultados sin mezclar datos de distintos periodos.
+
+16. Correccion de errores
+
+Las compras, ventas, productos, proveedores e ingredientes se pueden editar o eliminar.
+
+Esto es importante porque en la realidad siempre puede haber errores de carga.
+
+17. Personalizacion del MVP
+
+Smart Gastro APP se puede adaptar a cada cliente.
+
+Se puede personalizar:
+
+- nombre del local;
+- colores;
+- logo;
+- productos;
+- recetas;
+- proveedores;
+- unidades de medida;
+- reportes;
+- indicadores importantes para cada negocio.
+
+Esto hace que no sea una solucion generica, sino una herramienta adaptable al funcionamiento real de cada restaurante.
+
+18. Por que comprar la aplicacion
+
+Porque no es solamente una planilla. Es una herramienta que conecta compras, stock, ventas, costos, vencimientos y rentabilidad en un solo lugar.
+
+Ayuda a:
+
+- reducir desperdicio;
+- evitar quiebres de stock;
+- mejorar compras;
+- anticipar compras futuras;
+- entender margenes;
+- detectar productos rentables;
+- anticipar ventas;
+- tomar decisiones con datos;
+- ordenar la operacion gastronomica.
+
+CIERRE PARA EL ORAL
+
+Smart Gastro APP busca que un restaurante deje de manejarse solo por intuicion y empiece a tomar decisiones con informacion clara.
+
+La propuesta de valor es simple: vender mejor, comprar mejor, desperdiciar menos y entender que productos realmente hacen rentable al negocio.
