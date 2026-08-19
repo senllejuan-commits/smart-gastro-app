@@ -6,33 +6,34 @@
   <title>Smart Gastro APP</title>
   <style>
     :root {
-      --ink: #102b3a;
-      --muted: #607985;
-      --line: #cfe2df;
+      --ink: #26143a;
+      --muted: #766484;
+      --line: #e3d6f0;
       --surface: rgba(255, 255, 255, .92);
       --surface-strong: #ffffff;
-      --blue: #0c5f83;
-      --blue-dark: #06384f;
-      --teal: #16a6a3;
-      --mint: #58c99b;
-      --mint-soft: #e7f7f2;
-      --warn: #e0a944;
-      --danger: #c3564a;
+      --blue: #5c2d86;
+      --blue-dark: #3a1d5f;
+      --teal: #ffc928;
+      --mint: #ffe06a;
+      --mint-soft: #fff6cf;
+      --warn: #f59f25;
+      --danger: #d94e50;
+      --shadow: rgba(55, 21, 87, .16);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
-      background: #eef7f8;
+      background: #f6f0fb;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       background:
-        radial-gradient(circle at 16% 10%, rgba(88, 201, 155, .20), transparent 30%),
-        radial-gradient(circle at 86% 4%, rgba(12, 95, 131, .13), transparent 28%),
-        linear-gradient(135deg, rgba(12, 95, 131, .06) 0 1px, transparent 1px 26px),
-        #f4fbfb;
+        radial-gradient(circle at 16% 10%, rgba(255, 201, 40, .22), transparent 30%),
+        radial-gradient(circle at 86% 4%, rgba(92, 45, 134, .18), transparent 28%),
+        linear-gradient(135deg, rgba(92, 45, 134, .07) 0 1px, transparent 1px 26px),
+        #fbf7ff;
     }
     button, input, select { font: inherit; }
-    button { background: linear-gradient(135deg, var(--blue), var(--teal)); border: 0; border-radius: 8px; box-shadow: 0 8px 18px rgba(12, 95, 131, .18); color: white; cursor: pointer; font-weight: 800; min-height: 38px; padding: 9px 13px; }
+    button { background: linear-gradient(135deg, #ffd43a, #f3a91f); border: 0; border-radius: 8px; box-shadow: 0 8px 18px rgba(92, 45, 134, .18); color: var(--blue-dark); cursor: pointer; font-weight: 900; min-height: 38px; padding: 9px 13px; text-transform: uppercase; }
     button:hover { filter: brightness(.94); }
     input, select { background: #fbfefe; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); min-height: 38px; padding: 8px 10px; width: 100%; }
     input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(22, 166, 163, .14); outline: none; }
@@ -40,12 +41,13 @@
     label span { color: var(--muted); font-size: .82rem; font-weight: 800; }
     .hint { color: var(--muted); font-size: .82rem; line-height: 1.35; margin: 0; }
     table { border-collapse: collapse; width: 100%; }
-    th, td { border-bottom: 1px solid #dcebe8; padding: 10px; text-align: left; vertical-align: top; }
-    th { background: #f2faf8; color: var(--blue); font-size: .75rem; text-transform: uppercase; }
+    th, td { border-bottom: 1px solid #eadff4; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #fff4c9; color: var(--blue-dark); font-size: .75rem; text-transform: uppercase; }
     .app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
     .side {
       background:
-        linear-gradient(160deg, rgba(6, 56, 79, .98), rgba(8, 83, 111, .96) 48%, rgba(22, 166, 163, .92)),
+        radial-gradient(circle at 34% 8%, rgba(255, 207, 49, .22), transparent 26%),
+        linear-gradient(160deg, #3b1b62, #5b2d86 48%, #6f3aa1),
         var(--blue-dark);
       color: white;
       padding: 20px 14px;
@@ -63,37 +65,37 @@
     }
     .side > * { position: relative; z-index: 1; }
     .brand { align-items: center; display: flex; gap: 10px; margin-bottom: 22px; }
-    .mark { align-items: center; background: #eefafa; border: 1px solid rgba(255,255,255,.55); border-radius: 8px; box-shadow: 0 10px 22px rgba(0,0,0,.18); color: var(--blue); display: inline-flex; font-weight: 900; height: 46px; justify-content: center; overflow: hidden; width: 46px; }
+    .mark { align-items: center; background: #ffc928; border: 1px solid rgba(255,255,255,.55); border-radius: 8px; box-shadow: 0 10px 22px rgba(0,0,0,.22); color: #5b2d86; display: inline-flex; font-family: Impact, "Arial Black", system-ui, sans-serif; font-size: 1.05rem; font-weight: 900; height: 46px; justify-content: center; letter-spacing: .4px; overflow: hidden; text-shadow: 0 2px 0 rgba(255,255,255,.55); width: 46px; }
     .mark img { height: 100%; object-fit: cover; width: 100%; }
     .brand strong { letter-spacing: .2px; }
-    .brand small { color: #d9f3ee; display: block; margin-top: 3px; }
-    .nav { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; color: #e7fffa; display: block; margin-bottom: 7px; text-align: left; width: 100%; }
-    .nav.active { background: rgba(255,255,255,.20); border-color: rgba(255,255,255,.30); color: white; }
+    .brand small { color: #ffe8a3; display: block; margin-top: 3px; }
+    .nav { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.10); border-radius: 8px; color: #fff8dd; display: block; margin-bottom: 7px; text-align: left; width: 100%; }
+    .nav.active { background: #ffc928; border-color: rgba(255,255,255,.35); color: var(--blue-dark); }
     .subnav { display: flex; flex-wrap: wrap; gap: 8px; }
     .subnav button { background: white; border: 1px solid var(--line); box-shadow: none; color: var(--blue); }
-    .subnav button.active { background: linear-gradient(135deg, var(--blue), var(--teal)); border-color: transparent; color: white; }
+    .subnav button.active { background: linear-gradient(135deg, #ffd43a, #f3a91f); border-color: transparent; color: var(--blue-dark); }
     .main { display: grid; gap: 18px; padding: 28px; }
     .top { align-items: center; display: flex; justify-content: space-between; gap: 16px; }
-    .top { background: rgba(255,255,255,.55); border: 1px solid rgba(207,226,223,.9); border-radius: 8px; padding: 16px; backdrop-filter: blur(10px); }
-    .top p { color: var(--teal); font-size: .82rem; font-weight: 900; margin: 0; text-transform: uppercase; }
-    .top h1 { color: var(--blue-dark); font-size: 2rem; margin: 2px 0 0; }
+    .top { background: rgba(255,255,255,.68); border: 1px solid rgba(227,214,240,.95); border-radius: 8px; padding: 16px; backdrop-filter: blur(10px); }
+    .top p { color: var(--blue); font-size: .82rem; font-weight: 900; margin: 0; text-transform: uppercase; }
+    .top h1 { color: var(--blue-dark); font-family: Impact, "Arial Black", system-ui, sans-serif; font-size: 2.15rem; letter-spacing: .4px; margin: 2px 0 0; text-shadow: 0 3px 0 rgba(255, 201, 40, .35); text-transform: uppercase; }
     .secondary { background: white; border: 1px solid var(--line); box-shadow: none; color: var(--blue); }
     .grid { display: grid; gap: 16px; }
     .metrics { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
-    .metric, .panel { background: var(--surface); border: 1px solid rgba(207, 226, 223, .95); border-radius: 8px; box-shadow: 0 14px 34px rgba(7, 68, 93, .10); }
+    .metric, .panel { background: var(--surface); border: 1px solid rgba(227, 214, 240, .95); border-radius: 8px; box-shadow: 0 14px 34px var(--shadow); }
     .metric { display: grid; gap: 8px; min-height: 110px; overflow: hidden; padding: 15px; position: relative; }
-    .metric::before { background: linear-gradient(135deg, var(--blue), var(--mint)); content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; }
+    .metric::before { background: linear-gradient(135deg, var(--blue), var(--teal)); content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; }
     .metric span { color: var(--muted); font-weight: 800; }
     .metric strong { color: var(--blue); font-size: 1.8rem; }
     .objective-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-    .objective-card { background: var(--surface); border: 1px solid rgba(207, 226, 223, .95); border-radius: 8px; box-shadow: 0 14px 34px rgba(7, 68, 93, .10); display: grid; gap: 12px; overflow: hidden; padding: 16px; position: relative; }
-    .objective-card::before { background: linear-gradient(135deg, var(--blue), var(--mint)); content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; }
+    .objective-card { background: var(--surface); border: 1px solid rgba(227, 214, 240, .95); border-radius: 8px; box-shadow: 0 14px 34px var(--shadow); display: grid; gap: 12px; overflow: hidden; padding: 16px; position: relative; }
+    .objective-card::before { background: linear-gradient(135deg, var(--blue), var(--teal)); content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; }
     .objective-card.warn::before { background: linear-gradient(135deg, var(--warn), #f3cc75); }
     .objective-card h3 { color: var(--blue-dark); font-size: 1rem; margin: 0; }
     .objective-card .big { color: var(--blue); font-size: 2rem; font-weight: 900; line-height: 1; }
     .objective-card .summary { color: var(--muted); font-weight: 800; }
     .objective-stats { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .objective-stats div { background: #f6fbfa; border: 1px solid #dcebe8; border-radius: 8px; padding: 9px; }
+    .objective-stats div { background: #fffbeb; border: 1px solid #eadff4; border-radius: 8px; padding: 9px; }
     .objective-stats span { color: var(--muted); display: block; font-size: .72rem; font-weight: 900; text-transform: uppercase; }
     .objective-stats strong { color: var(--blue-dark); display: block; font-size: .95rem; margin-top: 3px; }
     .panel { padding: 17px; }
@@ -101,17 +103,17 @@
     .split { display: grid; gap: 18px; grid-template-columns: minmax(280px, 390px) minmax(0, 1fr); }
     .form { display: grid; gap: 12px; }
     .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .report-actions { border-top: 1px solid #dcebe8; display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 12px; }
+    .report-actions { border-top: 1px solid #eadff4; display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 12px; }
     .report-actions button { min-width: 170px; }
     .table-wrap { overflow-x: auto; }
     .text { background: transparent; box-shadow: none; color: var(--blue); min-height: auto; padding: 4px 7px; }
     .danger { color: var(--danger); }
-    .alert, .rec { background: #fbfefe; border: 1px solid #dcebe8; border-left: 4px solid var(--teal); border-radius: 8px; display: grid; gap: 4px; margin-bottom: 9px; padding: 11px; }
+    .alert, .rec { background: #fffdf6; border: 1px solid #eadff4; border-left: 4px solid var(--teal); border-radius: 8px; display: grid; gap: 4px; margin-bottom: 9px; padding: 11px; }
     .alert.warn { border-left-color: var(--warn); }
     .alert.danger { border-left-color: var(--danger); color: var(--ink); }
-    .notice { background: var(--mint-soft); border: 1px solid #b7e5d9; border-radius: 8px; color: var(--blue-dark); font-weight: 800; padding: 11px 13px; }
+    .notice { background: var(--mint-soft); border: 1px solid #f3d56c; border-radius: 8px; color: var(--blue-dark); font-weight: 900; padding: 11px 13px; }
     .notification-stack { display: grid; gap: 10px; }
-    .notification { align-items: center; background: #fff9e8; border: 1px solid #f0d48d; border-left: 5px solid var(--warn); border-radius: 8px; box-shadow: 0 14px 34px rgba(7, 68, 93, .10); display: flex; justify-content: space-between; gap: 14px; padding: 13px 15px; }
+    .notification { align-items: center; background: #fff9e8; border: 1px solid #f0d48d; border-left: 5px solid var(--warn); border-radius: 8px; box-shadow: 0 14px 34px var(--shadow); display: flex; justify-content: space-between; gap: 14px; padding: 13px 15px; }
     .notification.danger { background: #fff0ed; border-color: #efb7ad; border-left-color: var(--danger); }
     .notification strong { color: var(--blue-dark); display: block; margin-bottom: 3px; }
     .notification span { color: var(--muted); font-size: .9rem; font-weight: 700; }
@@ -128,11 +130,11 @@
     .bar-head { align-items: center; display: flex; justify-content: space-between; gap: 12px; }
     .bar-head strong { color: var(--blue-dark); }
     .bar-head span { color: var(--muted); font-weight: 800; white-space: nowrap; }
-    .bar-track { background: #e7f2f0; border-radius: 999px; height: 14px; overflow: hidden; }
+    .bar-track { background: #eee3f7; border-radius: 999px; height: 14px; overflow: hidden; }
     .bar-fill { background: linear-gradient(90deg, var(--blue), var(--teal), var(--mint)); border-radius: inherit; height: 100%; min-width: 3px; }
     .bar-fill.warn { background: linear-gradient(90deg, var(--warn), #f3cc75); }
     .bar-fill.danger { background: linear-gradient(90deg, var(--danger), #e08a7f); }
-    .owner-note { align-items: center; background: #fbfefe; border: 1px solid #dcebe8; border-radius: 8px; display: flex; justify-content: space-between; gap: 14px; padding: 12px; }
+    .owner-note { align-items: center; background: #fffdf6; border: 1px solid #eadff4; border-radius: 8px; display: flex; justify-content: space-between; gap: 14px; padding: 12px; }
     .owner-note strong { color: var(--blue-dark); }
     .owner-note span { color: var(--muted); font-weight: 800; text-align: right; }
     @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .side { position: static; } .metrics, .split, .owner-grid { grid-template-columns: 1fr; } }
@@ -798,7 +800,7 @@
     function layout(content) {
       const notifications = ["owner", "dashboard"].includes(tab) ? eventNotifications() : "";
       const cleanNotice = `<div class="notice">Version limpia para reutilizar en otra materia: no trae ventas, compras, productos, ingredientes, proveedores ni eventos cargados. Primero cargar Ingredientes, luego Productos, Compras y Ventas.</div>`;
-      document.getElementById("app").innerHTML = `<div class="app"><aside class="side"><div class="brand"><span class="mark"><img src="sg-ai-logo.jpg" alt="SG AI"></span><div><strong>Smart Gastro APP</strong><small>Version limpia</small></div></div>${nav()}</aside><main class="main"><header class="top"><div><p>Gestion independiente con reglas inteligentes</p><h1>${labels[tab]}</h1></div><button class="secondary" onclick="resetDemo()">Limpiar datos</button></header>${cleanNotice}${notifications}${content}</main></div>`;
+      document.getElementById("app").innerHTML = `<div class="app"><aside class="side"><div class="brand"><span class="mark">MVP</span><div><strong>Smart Gastro APP</strong><small>Version limpia</small></div></div>${nav()}</aside><main class="main"><header class="top"><div><p>Gestion independiente con reglas inteligentes</p><h1>${labels[tab]}</h1></div><button class="secondary" onclick="resetDemo()">Limpiar datos</button></header>${cleanNotice}${notifications}${content}</main></div>`;
     }
     function dashboard() {
       const a = alerts();
