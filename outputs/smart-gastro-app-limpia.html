@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Smart Gastro APP</title>
+  <title>mvp.burgers</title>
   <style>
     :root {
       --ink: #26143a;
@@ -800,7 +800,7 @@
     function layout(content) {
       const notifications = ["owner", "dashboard"].includes(tab) ? eventNotifications() : "";
       const cleanNotice = `<div class="notice">Version limpia para reutilizar en otra materia: no trae ventas, compras, productos, ingredientes, proveedores ni eventos cargados. Primero cargar Ingredientes, luego Productos, Compras y Ventas.</div>`;
-      document.getElementById("app").innerHTML = `<div class="app"><aside class="side"><div class="brand"><span class="mark">MVP</span><div><strong>Smart Gastro APP</strong><small>Version limpia</small></div></div>${nav()}</aside><main class="main"><header class="top"><div><p>Gestion independiente con reglas inteligentes</p><h1>${labels[tab]}</h1></div><button class="secondary" onclick="resetDemo()">Limpiar datos</button></header>${cleanNotice}${notifications}${content}</main></div>`;
+      document.getElementById("app").innerHTML = `<div class="app"><aside class="side"><div class="brand"><span class="mark">MVP</span><div><strong>mvp.burgers</strong><small>Version limpia</small></div></div>${nav()}</aside><main class="main"><header class="top"><div><p>Gestion independiente con reglas inteligentes</p><h1>${labels[tab]}</h1></div><button class="secondary" onclick="resetDemo()">Limpiar datos</button></header>${cleanNotice}${notifications}${content}</main></div>`;
     }
     function dashboard() {
       const a = alerts();
