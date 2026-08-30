@@ -137,6 +137,11 @@
     .owner-note { align-items: center; background: #fffdf6; border: 1px solid #eadff4; border-radius: 8px; display: flex; justify-content: space-between; gap: 14px; padding: 12px; }
     .owner-note strong { color: var(--blue-dark); }
     .owner-note span { color: var(--muted); font-weight: 800; text-align: right; }
+    .club-card { background: var(--surface); border: 1px solid rgba(227, 214, 240, .95); border-radius: 8px; box-shadow: 0 14px 34px var(--shadow); display: grid; gap: 10px; padding: 15px; }
+    .club-card h3 { color: var(--blue-dark); margin: 0; }
+    .club-card .club-meta { color: var(--muted); font-size: .86rem; font-weight: 800; }
+    .chat-shell { background: var(--surface); border: 1px solid rgba(227, 214, 240,.95); border-radius: 12px; box-shadow: 0 14px 34px var(--shadow); min-height: 720px; overflow: hidden; }
+    .chat-frame { border: 0; display: block; height: 720px; width: 100%; }
     @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .side { position: static; } .metrics, .split, .owner-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -167,6 +172,9 @@
       preImplementationSales: [],
       postImplementationPurchases: [],
       postImplementationSales: [],
+      clubs: [],
+      clubPointMovements: [],
+      clubBenefits: [],
       objectiveBaseline: { stockBreaks: 0, wasteQuantity: 0, urgentPurchases: 0 },
       objectiveBaselineUsesLotWaste: true,
       postPurchaseSchemaVersion: 4,
@@ -350,6 +358,9 @@
       .map(normalizeEvent)
       .filter(event => !existingEventKeys.has(event.id || `${event.name}-${event.date}`));
     state.events = [...seededEvents, ...existingEvents];
+    state.clubs = state.clubs || [];
+    state.clubPointMovements = state.clubPointMovements || [];
+    state.clubBenefits = state.clubBenefits || [];
     let tab = "owner";
     let editingIngredientId = "";
     let editingPurchaseId = "";
@@ -794,9 +805,9 @@
     }
     function nav() {
       const eventCount = upcomingEvents().length;
-      return ["owner", "dashboard", "objectives", "sales", "products", "purchases", "ingredients", "suppliers", "events", "ai"].map(x => `<button class="nav ${tab === x ? "active" : ""}" onclick="tab='${x}';render()">${labels[x]}${x === "events" && eventCount ? `<span class="nav-badge">${eventCount}</span>` : ""}</button>`).join("");
+      return ["owner", "dashboard", "objectives", "sales", "products", "purchases", "ingredients", "suppliers", "events", "clubs", "ai", "assistant"].map(x => `<button class="nav ${tab === x ? "active" : ""}" onclick="tab='${x}';render()">${labels[x]}${x === "events" && eventCount ? `<span class="nav-badge">${eventCount}</span>` : ""}</button>`).join("");
     }
-    const labels = { dashboard: "Dashboard", objectives: "Objetivos", owner: "Panel Ejecutivo", ingredients: "Ingredientes", products: "Productos", suppliers: "Proveedores", purchases: "Compras", sales: "Ventas", events: "Eventos", ai: "Recomendaciones IA" };
+    const labels = { dashboard: "Dashboard", objectives: "Objetivos", owner: "Panel Ejecutivo", ingredients: "Ingredientes", products: "Productos", suppliers: "Proveedores", purchases: "Compras", sales: "Ventas", events: "Eventos", clubs: "Clubes barriales", ai: "Recomendaciones IA", assistant: "Entrenador MVP" };
     function layout(content) {
       const notifications = ["owner", "dashboard"].includes(tab) ? eventNotifications() : "";
       const cleanNotice = `<div class="notice">Version limpia para reutilizar en otra materia: no trae ventas, compras, productos, ingredientes, proveedores ni eventos cargados. Primero cargar Ingredientes, luego Productos, Compras y Ventas.</div>`;
@@ -946,6 +957,7 @@
     function sales() {
       const item = editingSaleId ? byId(state.sales, editingSaleId) : {};
       const productOptions = state.products.map(p => `<option value="${p.id}" ${p.id === item.productId ? "selected" : ""}>${p.code} - ${p.name}</option>`).join("");
+      const clubOptions = `<option value="">Sin club asociado</option>${state.clubs.filter(club => club.active !== false).map(club => `<option value="${club.id}" ${club.id === item.clubId ? "selected" : ""}>${club.name} - ${club.neighborhood}</option>`).join("")}`;
       const filteredSales = salesByDateFilter().sort((a, b) => String(b.date).localeCompare(String(a.date)));
       const performance = productPerformanceRows(filteredSales);
       const totalSold = performance.reduce((total, row) => total + row.sold, 0);
@@ -953,9 +965,27 @@
       const totalMargin = performance.reduce((total, row) => total + row.totalMargin, 0);
       const summaryRows = performance.filter(row => row.sold > 0);
       const summary = summaryRows.length ? `<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Unidades vendidas</th><th>Facturacion</th><th>Margen estimado</th></tr></thead><tbody>${summaryRows.map(row => `<tr><td>${row.product.name}</td><td><strong>${num(row.sold)}</strong></td><td>${money(row.revenue)}</td><td>${money(row.totalMargin)}</td></tr>`).join("")}</tbody></table></div>` : "No hay ventas para el filtro seleccionado.";
-      const rows = filteredSales.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th></th></tr></thead><tbody>${filteredSales.map(s => `<tr><td>${s.date}</td><td>${byId(state.products, s.productId).name}</td><td>${num(s.quantity)}</td><td><button class="text" onclick="editSale('${s.id}')">Editar</button><button class="text danger" onclick="deleteSale('${s.id}')">Eliminar</button></td></tr>`).join("")}</tbody></table></div>` : "No hay ventas para el filtro seleccionado.";
+      const rows = filteredSales.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Club elegido</th><th>Puntos</th><th></th></tr></thead><tbody>${filteredSales.map(s => `<tr><td>${s.date}</td><td>${byId(state.products, s.productId).name}</td><td>${num(s.quantity)}</td><td>${s.clubId ? byId(state.clubs, s.clubId).name || "Club eliminado" : "Sin club"}</td><td>${s.clubId ? num(Number(s.quantity || 0) * 10) : "0"}</td><td><button class="text" onclick="editSale('${s.id}')">Editar</button><button class="text danger" onclick="deleteSale('${s.id}')">Eliminar</button></td></tr>`).join("")}</tbody></table></div>` : "No hay ventas para el filtro seleccionado.";
       const filter = `<div class="grid">${periodButtons(salesPeriod, "setSalesPeriod")}<form class="form" onsubmit="setSalesFilter(event)"><div class="actions"><label><span>Desde</span><input name="startDate" type="date" value="${salesFilterStart}"></label><label><span>Hasta</span><input name="endDate" type="date" value="${salesFilterEnd}"></label></div><div class="actions"><button>Aplicar filtro manual</button><button class="secondary" type="button" onclick="clearSalesFilter()">Limpiar</button><button type="button" onclick="downloadSalesReport()">Descargar reporte</button></div></form></div>`;
-      layout(`<section class="grid"><div class="split"><div class="panel"><h2>${editingSaleId ? "Editar venta" : "Registrar venta"}</h2><form class="form" onsubmit="addSale(event)"><label><span>Fecha</span><input name="date" type="date" value="${item.date || new Date().toISOString().slice(0,10)}"></label><label><span>Producto</span><select name="productId">${productOptions}</select></label><label><span>Cantidad</span><input name="quantity" type="text" inputmode="decimal" value="${formNumber(item.quantity ?? 1)}" required></label><div class="actions"><button>${editingSaleId ? "Guardar cambios" : "Registrar venta"}</button>${editingSaleId ? `<button class="secondary" type="button" onclick="cancelSaleEdit()">Cancelar</button>` : ""}</div></form></div><div class="panel"><h2>Conteo de productos vendidos</h2><p class="hint">Periodo activo: ${salesFilterLabel()}.</p><div class="metrics"><div class="metric"><span>Unidades vendidas</span><strong>${num(totalSold)}</strong></div><div class="metric"><span>Facturacion</span><strong>${money(totalRevenue)}</strong></div><div class="metric"><span>Margen estimado</span><strong>${money(totalMargin)}</strong></div></div>${summary}</div></div><div class="panel"><h2>Historial</h2>${filter}<p class="hint">El filtro modifica tanto el historial como el conteo de productos vendidos.</p>${rows}</div></section>`);
+      layout(`<section class="grid"><div class="split"><div class="panel"><h2>${editingSaleId ? "Editar venta" : "Registrar venta"}</h2><form class="form" onsubmit="addSale(event)"><label><span>Fecha</span><input name="date" type="date" value="${item.date || new Date().toISOString().slice(0,10)}"></label><label><span>Producto</span><select name="productId">${productOptions}</select></label><label><span>Cantidad</span><input name="quantity" type="text" inputmode="decimal" value="${formNumber(item.quantity ?? 1)}" required></label><label><span>Club barrial elegido</span><select name="clubId">${clubOptions}</select></label><p class="hint">Cada hamburguesa vendida genera 10 puntos para el club seleccionado.</p><div class="actions"><button>${editingSaleId ? "Guardar cambios" : "Registrar venta"}</button>${editingSaleId ? `<button class="secondary" type="button" onclick="cancelSaleEdit()">Cancelar</button>` : ""}</div></form></div><div class="panel"><h2>Conteo de productos vendidos</h2><p class="hint">Periodo activo: ${salesFilterLabel()}.</p><div class="metrics"><div class="metric"><span>Unidades vendidas</span><strong>${num(totalSold)}</strong></div><div class="metric"><span>Facturacion</span><strong>${money(totalRevenue)}</strong></div><div class="metric"><span>Margen estimado</span><strong>${money(totalMargin)}</strong></div></div>${summary}</div></div><div class="panel"><h2>Historial</h2>${filter}<p class="hint">El filtro modifica tanto el historial como el conteo de productos vendidos.</p>${rows}</div></section>`);
+    }
+    const clubSalesPoints = clubId => state.sales.filter(sale => sale.clubId === clubId).reduce((total, sale) => total + Number(sale.quantity || 0) * 10, 0);
+    const clubManualPoints = clubId => state.clubPointMovements.filter(row => row.clubId === clubId).reduce((total, row) => total + Number(row.points || 0), 0);
+    const clubPoints = clubId => clubSalesPoints(clubId) + clubManualPoints(clubId);
+    const clubGoal = points => points < 500 ? { points: 500, name: "Equipamiento deportivo" } : points < 1000 ? { points: 1000, name: "Indumentaria" } : points < 1500 ? { points: 1500, name: "Apoyo para competencia" } : { points: 2000, name: "Evento conjunto" };
+    function clubs() {
+      const ranking = [...state.clubs].sort((a, b) => clubPoints(b.id) - clubPoints(a.id));
+      const totalPoints = ranking.reduce((total, club) => total + clubPoints(club.id), 0);
+      const linkedSales = state.sales.filter(sale => sale.clubId).length;
+      const leader = ranking[0];
+      const clubOptions = state.clubs.map(club => `<option value="${club.id}">${club.name} - ${club.neighborhood}</option>`).join("");
+      const cards = ranking.length ? `<div class="objective-cards">${ranking.map((club, index) => { const points = clubPoints(club.id); const goal = clubGoal(points); const previous = goal.points === 500 ? 0 : goal.points - 500; const progress = Math.min(100, Math.max(0, (points - previous) / (goal.points - previous) * 100)); return `<article class="club-card"><div class="bar-head"><h3>${index + 1}. ${club.name}</h3><strong>${num(points)} puntos</strong></div><div class="club-meta">${club.neighborhood} · ${club.sport} · Convenio ${club.active === false ? "inactivo" : "activo"}</div><div class="bar-track"><div class="bar-fill" style="width:${progress}%"></div></div><p class="hint">Próxima meta: ${goal.name} al alcanzar ${num(goal.points)} puntos.</p><div class="actions"><button class="secondary" onclick="toggleClub('${club.id}')">${club.active === false ? "Activar" : "Pausar"}</button><button class="text danger" onclick="deleteClub('${club.id}')">Eliminar</button></div></article>`; }).join("")}</div>` : `<div class="notice">Todavía no hay clubes adheridos. Cargá el primer convenio para comenzar.</div>`;
+      const movements = state.clubPointMovements.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Club</th><th>Motivo</th><th>Puntos</th></tr></thead><tbody>${state.clubPointMovements.map(row => `<tr><td>${row.date}</td><td>${byId(state.clubs, row.clubId).name || "Club eliminado"}</td><td>${row.reason}</td><td>${num(row.points)}</td></tr>`).join("")}</tbody></table></div>` : "Sin ajustes manuales.";
+      const benefits = state.clubBenefits.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Club</th><th>Beneficio entregado</th><th>Detalle</th></tr></thead><tbody>${state.clubBenefits.map(row => `<tr><td>${row.date}</td><td>${byId(state.clubs, row.clubId).name || "Club eliminado"}</td><td>${row.type}</td><td>${row.detail || "-"}</td></tr>`).join("")}</tbody></table></div>` : "Todavía no hay beneficios entregados.";
+      layout(`<section class="grid"><div class="metrics"><div class="metric"><span>Puntos acumulados</span><strong>${num(totalPoints)}</strong></div><div class="metric"><span>Clubes adheridos</span><strong>${state.clubs.length}</strong></div><div class="metric"><span>Ventas vinculadas</span><strong>${linkedSales}</strong></div><div class="metric"><span>Club con mayor apoyo</span><strong>${leader ? leader.name : "Sin datos"}</strong></div></div><div class="panel"><h2>Clasificación y progreso de clubes</h2><p class="hint">Los puntos institucionales de MVP Draft se calculan a razón de 10 puntos por hamburguesa vendida. No son Puntos Verdes.</p>${cards}</div><div class="split"><div class="panel"><h2>Agregar club barrial</h2><form class="form" onsubmit="addClub(event)"><label><span>Nombre del club</span><input name="name" required></label><label><span>Barrio / localidad</span><input name="neighborhood" required></label><label><span>Deporte principal</span><input name="sport" placeholder="Ej: básquet, fútbol, hockey" required></label><label><span>Contacto</span><input name="contact" placeholder="Nombre, teléfono o correo"></label><button>Registrar convenio</button></form></div><div class="panel"><h2>Ajustar puntos</h2><form class="form" onsubmit="addClubPoints(event)"><label><span>Club</span><select name="clubId" required>${clubOptions}</select></label><label><span>Fecha</span><input name="date" type="date" value="${todayISO()}" required></label><label><span>Puntos</span><input name="points" type="number" required></label><label><span>Motivo</span><input name="reason" placeholder="Ej: jornada especial o corrección" required></label><button ${state.clubs.length ? "" : "disabled"}>Registrar movimiento</button></form></div></div><div class="split"><div class="panel"><h2>Registrar beneficio entregado</h2><form class="form" onsubmit="addClubBenefit(event)"><label><span>Club</span><select name="clubId" required>${clubOptions}</select></label><label><span>Fecha</span><input name="date" type="date" value="${todayISO()}" required></label><label><span>Tipo</span><select name="type"><option>Equipamiento deportivo</option><option>Indumentaria</option><option>Apoyo para competencia</option><option>Evento conjunto</option></select></label><label><span>Detalle</span><input name="detail" placeholder="Descripción de lo entregado"></label><button ${state.clubs.length ? "" : "disabled"}>Registrar entrega</button></form></div><div class="panel"><h2>Metas del programa</h2><div class="rec"><strong>500 puntos</strong><span>Equipamiento deportivo</span></div><div class="rec"><strong>1.000 puntos</strong><span>Indumentaria</span></div><div class="rec"><strong>1.500 puntos</strong><span>Apoyo para competencias</span></div><div class="rec"><strong>2.000 puntos</strong><span>Evento conjunto con MVP Burgers</span></div></div></div><div class="panel"><h2>Movimientos de puntos</h2>${movements}</div><div class="panel"><h2>Beneficios entregados</h2>${benefits}</div></section>`);
+    }
+    function assistant() {
+      layout(`<section class="grid"><div class="notice">Entrenador MVP responde únicamente con la información validada del proyecto MVP Burgers.</div><div class="chat-shell"><iframe class="chat-frame" title="Entrenador MVP" loading="lazy" src="https://cdn.botpress.cloud/webchat/v5.0/shareable.html?configUrl=https://files.bpcontent.cloud/2026/08/30/02/20260830023320-4HAOIK3Q.json"></iframe></div></section>`);
     }
     function events() {
       const categoryOptions = ["feriado", "fecha patria", "deportivo", "temporada", "otro"].map(category => `<option>${category}</option>`).join("");
@@ -1075,6 +1105,11 @@
     window.deleteSale = saleId => { const sale = byId(state.sales, saleId); moveSaleStock(sale, 1); state.sales = state.sales.filter(s => s.id !== saleId); state.postImplementationSales = (state.postImplementationSales || []).filter(s => s.id !== saleId); editingSaleId = ""; save(); render(); };
     window.addEvent = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const event = { ...f, noticeDays: parseNumber(f.noticeDays || 30), id: id("evt") }; state.events.unshift(event); save(); render(); };
     window.removeItem = (collection, itemId) => { state[collection] = state[collection].filter(x => x.id !== itemId); save(); render(); };
+    window.addClub = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); state.clubs.unshift({ ...f, active: true, id: id("club") }); save(); render(); };
+    window.toggleClub = clubId => { state.clubs = state.clubs.map(club => club.id === clubId ? { ...club, active: club.active === false } : club); save(); render(); };
+    window.deleteClub = clubId => { state.clubs = state.clubs.filter(club => club.id !== clubId); save(); render(); };
+    window.addClubPoints = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); state.clubPointMovements.unshift({ ...f, points: parseNumber(f.points), id: id("points") }); save(); render(); };
+    window.addClubBenefit = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); state.clubBenefits.unshift({ ...f, id: id("benefit") }); save(); render(); };
     window.saveObjectives = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); state.objectiveBaseline = { stockBreaks: parseNumber(f.stockBreaks), wasteQuantity: parseNumber(f.wasteQuantity), urgentPurchases: parseNumber(f.urgentPurchases) }; state.objectiveBaselineUsesLotWaste = true; save(); objectives(); };
     function render() {
       if (tab === "dashboard") dashboard();
@@ -1086,7 +1121,9 @@
       if (tab === "purchases") purchases();
       if (tab === "sales") sales();
       if (tab === "events") events();
+      if (tab === "clubs") clubs();
       if (tab === "ai") ai();
+      if (tab === "assistant") assistant();
     }
     render();
   </script>
