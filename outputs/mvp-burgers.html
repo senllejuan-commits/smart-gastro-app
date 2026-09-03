@@ -1028,7 +1028,9 @@
       voiceEnabled = !voiceEnabled;
       if (!voiceEnabled) window.speechSynthesis.cancel();
       updateVoiceStatus();
-      if (voiceEnabled && lastBotResponse) speakMvpText(lastBotResponse);
+      if (voiceEnabled) {
+        speakMvpText(lastBotResponse || "Voz activada. Ya podés hacer tu pregunta.");
+      }
     };
     window.repeatMvpResponse = () => lastBotResponse ? speakMvpText(lastBotResponse) : alert("Todavía no hay una respuesta del bot para reproducir.");
     window.stopMvpVoice = () => window.speechSynthesis && window.speechSynthesis.cancel();
