@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartGastro IA Demo</title>
+  <style>
+    :root {
+      --ink: #102b3a;
+      --muted: #607985;
+      --line: #cfe2df;
+      --surface: rgba(255, 255, 255, .92);
+      --surface-strong: #ffffff;
+      --blue: #0c5f83;
+      --blue-dark: #06384f;
+      --teal: #16a6a3;
+      --mint: #58c99b;
+      --mint-soft: #e7f7f2;
+      --warn: #e0a944;
+      --danger: #c3564a;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #eef7f8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 16% 10%, rgba(88, 201, 155, .20), transparent 30%),
+        radial-gradient(circle at 86% 4%, rgba(12, 95, 131, .13), transparent 28%),
+        linear-gradient(135deg, rgba(12, 95, 131, .06) 0 1px, transparent 1px 26px),
+        #f4fbfb;
+    }
+    button, input, select { font: inherit; }
+    button { background: linear-gradient(135deg, var(--blue), var(--teal)); border: 0; border-radius: 8px; box-shadow: 0 8px 18px rgba(12, 95, 131, .18); color: white; cursor: pointer; font-weight: 800; min-height: 38px; padding: 9px 13px; }
+    button:hover { filter: brightness(.94); }
+    input, select { background: #fbfefe; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); min-height: 38px; padding: 8px 10px; width: 100%; }
+    input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(22, 166, 163, .14); outline: none; }
+    label { display: grid; gap: 6px; }
+    label span { color: var(--muted); font-size: .82rem; font-weight: 800; }
+    .hint { color: var(--muted); font-size: .82rem; line-height: 1.35; margin: 0; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #dcebe8; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #f2faf8; color: var(--blue); font-size: .75rem; text-transform: uppercase; }
+    .app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+    .side {
+      background:
+        linear-gradient(160deg, rgba(6, 56, 79, .98), rgba(8, 83, 111, .96) 48%, rgba(22, 166, 163, .92)),
+        var(--blue-dark);
+      color: white;
+      padding: 20px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .side::after {
+      background: linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.09) 1px, transparent 1px);
+      background-size: 28px 28px;
+      content: "";
+      inset: 0;
+      opacity: .18;
+      pointer-events: none;
+      position: absolute;
+    }
+    .side > * { position: relative; z-index: 1; }
+    .brand { align-items: center; display: flex; gap: 10px; margin-bottom: 22px; }
+    .mark { align-items: center; background: #eefafa; border: 1px solid rgba(255,255,255,.55); border-radius: 8px; box-shadow: 0 10px 22px rgba(0,0,0,.18); color: var(--blue); display: inline-flex; font-weight: 900; height: 46px; justify-content: center; overflow: hidden; width: 46px; }
+    .mark img { height: 100%; object-fit: cover; width: 100%; }
+    .brand strong { letter-spacing: .2px; }
+    .brand small { color: #d9f3ee; display: block; margin-top: 3px; }
+    .nav { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; color: #e7fffa; display: block; margin-bottom: 7px; text-align: left; width: 100%; }
+    .nav.active { background: rgba(255,255,255,.20); border-color: rgba(255,255,255,.30); color: white; }
+    .subnav { display: flex; flex-wrap: wrap; gap: 8px; }
+    .subnav button { background: white; border: 1px solid var(--line); box-shadow: none; color: var(--blue); }
+    .subnav button.active { background: linear-gradient(135deg, var(--blue), var(--teal)); border-color: transparent; color: white; }
+    .main { display: grid; gap: 18px; padding: 28px; }
+    .top { align-items: center; display: flex; justify-content: space-between; gap: 16px; }
+    .top { background: rgba(255,255,255,.55); border: 1px solid rgba(207,226,223,.9); border-radius: 8px; padding: 16px; backdrop-filter: blur(10px); }
+    .top p { color: var(--teal); font-size: .82rem; font-weight: 900; margin: 0; text-transform: uppercase; }
+    .top h1 { color: var(--blue-dark); font-size: 2rem; margin: 2px 0 0; }
+    .secondary { background: white; border: 1px solid var(--line); box-shadow: none; color: var(--blue); }
+    .grid { display: grid; gap: 16px; }
+    .metrics { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
+    .metric, .panel { background: var(--surface); border: 1px solid rgba(207, 226, 223, .95); border-radius: 8px; box-shadow: 0 14px 34px rgba(7, 68, 93, .10); }
+    .metric { display: grid; gap: 8px; min-height: 110px; overflow: hidden; padding: 15px; position: relative; }
+    .metric::before { background: linear-gradient(135deg, var(--blue), var(--mint)); content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; }
+    .metric span { color: var(--muted); font-weight: 800; }
+    .metric strong { color: var(--blue); font-size: 1.8rem; }
+    .objective-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .objective-card { background: var(--surface); border: 1px solid rgba(207, 226, 223, .95); border-radius: 8px; box-shadow: 0 14px 34px rgba(7, 68, 93, .10); display: grid; gap: 12px; overflow: hidden; padding: 16px; position: relative; }
+    .objective-card::before { background: linear-gradient(135deg, var(--blue), var(--mint)); content: ""; height: 4px; left: 0; position: absolute; right: 0; top: 0; }
+    .objective-card.warn::before { background: linear-gradient(135deg, var(--warn), #f3cc75); }
+    .objective-card h3 { color: var(--blue-dark); font-size: 1rem; margin: 0; }
+    .objective-card .big { color: var(--blue); font-size: 2rem; font-weight: 900; line-height: 1; }
+    .objective-card .summary { color: var(--muted); font-weight: 800; }
+    .objective-stats { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .objective-stats div { background: #f6fbfa; border: 1px solid #dcebe8; border-radius: 8px; padding: 9px; }
+    .objective-stats span { color: var(--muted); display: block; font-size: .72rem; font-weight: 900; text-transform: uppercase; }
+    .objective-stats strong { color: var(--blue-dark); display: block; font-size: .95rem; margin-top: 3px; }
+    .panel { padding: 17px; }
+    .panel h2 { color: var(--blue-dark); font-size: 1.08rem; margin: 0 0 14px; }
+    .split { display: grid; gap: 18px; grid-template-columns: minmax(280px, 390px) minmax(0, 1fr); }
+    .form { display: grid; gap: 12px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .report-actions { border-top: 1px solid #dcebe8; display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 12px; }
+    .report-actions button { min-width: 170px; }
+    .table-wrap { overflow-x: auto; }
+    .text { background: transparent; box-shadow: none; color: var(--blue); min-height: auto; padding: 4px 7px; }
+    .danger { color: var(--danger); }
+    .alert, .rec { background: #fbfefe; border: 1px solid #dcebe8; border-left: 4px solid var(--teal); border-radius: 8px; display: grid; gap: 4px; margin-bottom: 9px; padding: 11px; }
+    .alert.warn { border-left-color: var(--warn); }
+    .alert.danger { border-left-color: var(--danger); color: var(--ink); }
+    .notice { background: var(--mint-soft); border: 1px solid #b7e5d9; border-radius: 8px; color: var(--blue-dark); font-weight: 800; padding: 11px 13px; }
+    .notification-stack { display: grid; gap: 10px; }
+    .notification { align-items: center; background: #fff9e8; border: 1px solid #f0d48d; border-left: 5px solid var(--warn); border-radius: 8px; box-shadow: 0 14px 34px rgba(7, 68, 93, .10); display: flex; justify-content: space-between; gap: 14px; padding: 13px 15px; }
+    .notification.danger { background: #fff0ed; border-color: #efb7ad; border-left-color: var(--danger); }
+    .notification strong { color: var(--blue-dark); display: block; margin-bottom: 3px; }
+    .notification span { color: var(--muted); font-size: .9rem; font-weight: 700; }
+    .notification button { white-space: nowrap; }
+    .nav-badge { background: var(--danger); border-radius: 999px; color: white; float: right; font-size: .72rem; font-weight: 900; min-width: 22px; padding: 2px 7px; text-align: center; }
+    .bad-row { background: #fff8f4; }
+    .status { border-radius: 999px; display: inline-flex; font-size: .76rem; font-weight: 900; padding: 5px 9px; white-space: nowrap; }
+    .status.ok { background: #e2f7ee; color: #106b50; }
+    .status.warn { background: #fff3d7; color: #8a5f08; }
+    .status.danger { background: #ffe8e3; color: #a53d31; }
+    .owner-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(280px, 1fr)); }
+    .chart-list { display: grid; gap: 12px; }
+    .bar-row { display: grid; gap: 6px; }
+    .bar-head { align-items: center; display: flex; justify-content: space-between; gap: 12px; }
+    .bar-head strong { color: var(--blue-dark); }
+    .bar-head span { color: var(--muted); font-weight: 800; white-space: nowrap; }
+    .bar-track { background: #e7f2f0; border-radius: 999px; height: 14px; overflow: hidden; }
+    .bar-fill { background: linear-gradient(90deg, var(--blue), var(--teal), var(--mint)); border-radius: inherit; height: 100%; min-width: 3px; }
+    .bar-fill.warn { background: linear-gradient(90deg, var(--warn), #f3cc75); }
+    .bar-fill.danger { background: linear-gradient(90deg, var(--danger), #e08a7f); }
+    .owner-note { align-items: center; background: #fbfefe; border: 1px solid #dcebe8; border-radius: 8px; display: flex; justify-content: space-between; gap: 14px; padding: 12px; }
+    .owner-note strong { color: var(--blue-dark); }
+    .owner-note span { color: var(--muted); font-weight: 800; text-align: right; }
+    @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .side { position: static; } .metrics, .split, .owner-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const key = "smart-gastro-ia-demo-standalone";
+    const today = new Date();
+    const dateIn = days => {
+      const d = new Date(today);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().slice(0, 10);
+    };
+    const dateFrom = (dateText, days) => {
+      const d = new Date(`${dateText}T00:00:00`);
+      d.setDate(d.getDate() + Number(days || 0));
+      return d.toISOString().slice(0, 10);
+    };
+    const implementationDate = "2026-05-01";
+    const demo = {
+      suppliers: [],
+      ingredients: [],
+      products: [],
+      purchases: [],
+      sales: [],
+      events: [],
+      preImplementationPurchases: [],
+      preImplementationSales: [],
+      postImplementationPurchases: [],
+      postImplementationSales: [],
+      objectiveBaseline: { stockBreaks: 0, wasteQuantity: 0, urgentPurchases: 0 },
+      objectiveBaselineUsesLotWaste: true,
+      postPurchaseSchemaVersion: 4,
+      warning: ""
+    };
+    const clone = value => JSON.parse(JSON.stringify(value));
+    let state;
+    try {
+      state = JSON.parse(localStorage.getItem(key) || "null") || clone(demo);
+    } catch (error) {
+      state = clone(demo);
+      localStorage.removeItem(key);
+    }
+    const defaultCosts = {
+      "Pan de hamburguesa": 260,
+      "Carne": 11.3,
+      "Queso": 180,
+      "Tomate": 2.8,
+      "Lechuga": 2.2,
+      "Cafe": 9.5,
+      "Leche": 1.1
+    };
+    const defaultCodes = {
+      "Pan de hamburguesa": "ING-001",
+      "Carne": "ING-002",
+      "Queso": "ING-003",
+      "Tomate": "ING-004",
+      "Lechuga": "ING-005",
+      "Cafe": "ING-006",
+      "Leche": "ING-007"
+    };
+    const defaultCritical = {
+      "Pan de hamburguesa": true,
+      "Carne": true,
+      "Queso": true,
+      "Tomate": true,
+      "Lechuga": true,
+      "Leche": true
+    };
+    const defaultFoodGroups = {
+      "Pan de hamburguesa": "panificados",
+      "Carne": "proteinas",
+      "Queso": "lacteos",
+      "Tomate": "verduras",
+      "Lechuga": "verduras",
+      "Cafe": "no perecedero",
+      "Leche": "lacteos"
+    };
+    const defaultShelfLifeDays = {
+      "Pan de hamburguesa": 18,
+      "Carne": 6,
+      "Queso": 15,
+      "Tomate": 7,
+      "Lechuga": 7
+    };
+    const defaultExpirySource = {
+      "Pan de hamburguesa": "estimado",
+      "Carne": "estimado",
+      "Queso": "estimado",
+      "Tomate": "estimado",
+      "Lechuga": "estimado",
+      "Cafe": "paquete",
+      "Leche": "paquete"
+    };
+    const perishableGroups = ["lacteos", "verduras", "panificados", "proteinas"];
+    const objectiveTargets = {
+      stockBreaks: { label: "Quiebres de stock", target: 30, unit: "casos", baselineLabel: "Quiebres mensuales antes de instalar la app" },
+      wasteQuantity: { label: "Desperdicio perecedero", target: 40, unit: "unidades/gr/ml", baselineLabel: "Desperdicio mensual antes de instalar la app" },
+      urgentPurchases: { label: "Compras imprevistas y urgentes", target: 25, unit: "compras", baselineLabel: "Compras urgentes mensuales antes de instalar la app" }
+    };
+    const shelfLifeByIngredientId = { "ing-1": 18, "ing-2": 6, "ing-3": 15, "ing-4": 7, "ing-5": 7, "ing-6": 120, "ing-7": 8 };
+    const purchaseWithExpiry = purchase => ({
+      ...purchase,
+      expiryDate: purchase.expiryDate || dateFrom(purchase.date, shelfLifeByIngredientId[purchase.ingredientId] || 30)
+    });
+    function lotWasteRows(purchases, sales, options = {}) {
+      const asOfDate = options.asOfDate || new Date().toISOString().slice(0, 10);
+      const products = options.products || demo.products;
+      const ingredients = options.ingredients || demo.ingredients;
+      const lots = (purchases || [])
+        .map(purchaseWithExpiry)
+        .map(purchase => {
+          const ingredient = ingredients.find(item => item.id === purchase.ingredientId) || {};
+          const unitCost = Number(purchase.quantity || 0) > 0 ? Number(purchase.totalPrice || 0) / Number(purchase.quantity || 0) : Number(ingredient.costUnit || 0);
+          return { ...purchase, ingredient, unitCost, remaining: Number(purchase.quantity || 0) };
+        })
+        .filter(lot => lot.expiryDate && lot.ingredientId && (lot.ingredient.isCritical || perishableGroups.includes(lot.ingredient.foodGroup)));
+
+      (sales || [])
+        .slice()
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)))
+        .forEach(sale => {
+          const product = products.find(item => item.id === sale.productId) || {};
+          (product.recipe || []).forEach(recipeItem => {
+            let needed = Number(recipeItem.quantity || 0) * Number(sale.quantity || 0);
+            lots
+              .filter(lot => lot.ingredientId === recipeItem.ingredientId && lot.date <= sale.date && lot.expiryDate >= sale.date && lot.remaining > 0)
+              .sort((a, b) => String(a.expiryDate).localeCompare(String(b.expiryDate)) || String(a.date).localeCompare(String(b.date)))
+              .forEach(lot => {
+                if (needed <= 0) return;
+                const used = Math.min(lot.remaining, needed);
+                lot.remaining -= used;
+                needed -= used;
+              });
+          });
+        });
+
+      return lots.map(lot => {
+        const wasteQuantity = lot.expiryDate <= asOfDate ? Math.max(Number(lot.remaining || 0), 0) : 0;
+        return {
+          ...lot,
+          wasteQuantity,
+          wasteValue: wasteQuantity * Number(lot.unitCost || 0)
+        };
+      });
+    }
+    const lotWasteTotal = (purchases, sales, options = {}) => lotWasteRows(purchases, sales, options).reduce((total, row) => ({
+      quantity: total.quantity + Number(row.wasteQuantity || 0),
+      value: total.value + Number(row.wasteValue || 0)
+    }), { quantity: 0, value: 0 });
+    const defaultPreImplementationPurchases = [];
+    const defaultPreImplementationSales = [];
+    const defaultPostImplementationPurchases = [];
+    const defaultPostImplementationSales = [];
+    const defaultObjectiveBaseline = {
+      stockBreaks: defaultPreImplementationPurchases.reduce((total, purchase) => total + Number(purchase.stockBreaks || 0), 0),
+      wasteQuantity: lotWasteTotal(defaultPreImplementationPurchases, defaultPreImplementationSales).quantity,
+      urgentPurchases: defaultPreImplementationPurchases.filter(purchase => purchase.isUrgent).length
+    };
+    const isPerishable = ingredient => perishableGroups.includes(ingredient.foodGroup);
+    state.ingredients = (state.ingredients || []).map((i, index) => ({
+      code: defaultCodes[i.name] || `ING-${String(index + 1).padStart(3, "0")}`,
+      costUnit: defaultCosts[i.name] || 0,
+      foodGroup: defaultFoodGroups[i.name] || "otros",
+      isCritical: Boolean(defaultCritical[i.name]),
+      expirySource: defaultExpirySource[i.name] || "estimado",
+      shelfLifeDays: defaultShelfLifeDays[i.name] || "",
+      ...i
+    })).map(i => ({ ...i, isCritical: Boolean(i.isCritical || isPerishable(i)) }));
+    const mergeRowsById = (current, rowsToAdd) => {
+      const rows = current || [];
+      const ids = new Set(rows.map(row => row.id));
+      return [...rowsToAdd.filter(row => !ids.has(row.id)), ...rows];
+    };
+    const postPurchaseSchemaVersion = 4;
+    const shouldMigratePostPurchases = state.postPurchaseSchemaVersion !== postPurchaseSchemaVersion;
+    const defaultPostPurchaseById = Object.fromEntries(defaultPostImplementationPurchases.map(purchase => [purchase.id, purchaseWithExpiry(purchase)]));
+    const normalizePostSeededPurchase = purchase => {
+      const seeded = defaultPostPurchaseById[purchase.id];
+      if (!seeded) return purchaseWithExpiry(purchase);
+      return shouldMigratePostPurchases ? purchaseWithExpiry(seeded) : purchaseWithExpiry(purchase);
+    };
+    state.sales = mergeRowsById((state.sales || []).filter(sale => !String(sale.id || "").startsWith("sale-demo-")), clone(defaultPostImplementationSales));
+    state.purchases = mergeRowsById((state.purchases || []).filter(purchase => !String(purchase.id || "").startsWith("pur-demo-")), clone(defaultPostImplementationPurchases)).map(purchase => ({
+      isUrgent: false,
+      urgentReason: "",
+      ...purchase
+    })).map(normalizePostSeededPurchase);
+    state.preImplementationPurchases = ((state.preImplementationPurchases || []).length ? state.preImplementationPurchases : clone(defaultPreImplementationPurchases)).map(purchaseWithExpiry);
+    state.preImplementationSales = (state.preImplementationSales || []).length ? state.preImplementationSales : clone(defaultPreImplementationSales);
+    state.postImplementationPurchases = mergeRowsById(state.postImplementationPurchases || [], clone(defaultPostImplementationPurchases)).map(normalizePostSeededPurchase);
+    state.postImplementationSales = (state.postImplementationSales || []).length ? state.postImplementationSales : clone(defaultPostImplementationSales);
+    state.postPurchaseSchemaVersion = postPurchaseSchemaVersion;
+    state.objectiveBaseline = {
+      ...defaultObjectiveBaseline,
+      ...(state.objectiveBaseline || {})
+    };
+    if (!state.objectiveBaselineUsesLotWaste) {
+      state.objectiveBaseline.wasteQuantity = lotWasteTotal(state.preImplementationPurchases, state.preImplementationSales).quantity;
+      state.objectiveBaselineUsesLotWaste = true;
+    }
+    const normalizeEvent = event => ({
+      noticeDays: 30,
+      impact: "medio",
+      category: "otro",
+      ...event
+    });
+    const existingEvents = (state.events || []).map(normalizeEvent);
+    const existingEventKeys = new Set(existingEvents.map(event => event.id || `${event.name}-${event.date}`));
+    const seededEvents = clone(demo.events)
+      .map(normalizeEvent)
+      .filter(event => !existingEventKeys.has(event.id || `${event.name}-${event.date}`));
+    state.events = [...seededEvents, ...existingEvents];
+    let tab = "owner";
+    let editingIngredientId = "";
+    let editingPurchaseId = "";
+    let editingSaleId = "";
+    let editingProductId = "";
+    let editingSupplierId = "";
+    let selectedPurchaseIngredientId = "";
+    let dashboardView = "resumen";
+    let ownerPeriod = "90";
+    let purchasePeriod = "90";
+    let salesPeriod = "90";
+    let salesFilterStart = "";
+    let salesFilterEnd = "";
+    const money = n => new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(Number(n || 0));
+    const num = n => new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(Number(n || 0));
+    const parseNumber = value => {
+      if (typeof value === "number") return value;
+      const text = String(value || "").trim();
+      if (!text) return 0;
+      const normalized = text.replace(/\s/g, "").replace(/\./g, "").replace(",", ".");
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+    const formNumber = value => value === undefined || value === null || value === "" ? "" : num(value);
+    const id = prefix => prefix + "-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    const save = () => localStorage.setItem(key, JSON.stringify(state));
+    function syncDemoStockFromHistory() {
+      if (state.demoStockSynced) return;
+      const hasDemoSales = (state.sales || []).some(sale => String(sale.id || "").startsWith("sale-demo-"));
+      const hasDemoPurchases = (state.purchases || []).some(purchase => String(purchase.id || "").startsWith("pur-demo-"));
+      if (!hasDemoSales || !hasDemoPurchases) return;
+      const openingStock = Object.fromEntries(demo.ingredients.map(ingredient => [ingredient.id, Number(ingredient.stock || 0)]));
+      const purchased = {};
+      const consumed = {};
+      (state.purchases || []).forEach(purchase => {
+        purchased[purchase.ingredientId] = Number(purchased[purchase.ingredientId] || 0) + Number(purchase.quantity || 0);
+      });
+      (state.sales || []).forEach(sale => {
+        const product = (state.products || []).find(item => item.id === sale.productId) || {};
+        (product.recipe || []).forEach(recipeItem => {
+          consumed[recipeItem.ingredientId] = Number(consumed[recipeItem.ingredientId] || 0) + Number(recipeItem.quantity || 0) * Number(sale.quantity || 0);
+        });
+      });
+      state.ingredients = (state.ingredients || []).map(ingredient => {
+        if (!(ingredient.id in openingStock)) return ingredient;
+        const stock = openingStock[ingredient.id] + Number(purchased[ingredient.id] || 0) - Number(consumed[ingredient.id] || 0);
+        return { ...ingredient, stock: Math.max(0, stock) };
+      });
+      state.demoStockSynced = true;
+    }
+    const operationalStockSyncVersion = 3;
+    function recomputeStockFromOperationalHistory() {
+      const openingStock = Object.fromEntries(demo.ingredients.map(ingredient => [ingredient.id, Number(ingredient.stock || 0)]));
+      const purchased = {};
+      const consumed = {};
+      (state.purchases || []).forEach(purchase => {
+        purchased[purchase.ingredientId] = Number(purchased[purchase.ingredientId] || 0) + Number(purchase.quantity || 0);
+      });
+      (state.sales || []).forEach(sale => {
+        const product = (state.products || []).find(item => item.id === sale.productId) || {};
+        (product.recipe || []).forEach(recipeItem => {
+          consumed[recipeItem.ingredientId] = Number(consumed[recipeItem.ingredientId] || 0) + Number(recipeItem.quantity || 0) * Number(sale.quantity || 0);
+        });
+      });
+      state.ingredients = (state.ingredients || []).map(ingredient => {
+        if (!(ingredient.id in openingStock)) return ingredient;
+        const stock = openingStock[ingredient.id] + Number(purchased[ingredient.id] || 0) - Number(consumed[ingredient.id] || 0);
+        return { ...ingredient, stock: Math.max(0, stock) };
+      });
+      state.operationalStockSyncedVersion = operationalStockSyncVersion;
+    }
+    syncDemoStockFromHistory();
+    if (state.operationalStockSyncedVersion !== operationalStockSyncVersion) recomputeStockFromOperationalHistory();
+    save();
+    window.resetDemo = () => { localStorage.removeItem(key); state = clone(demo); editingIngredientId = ""; editingPurchaseId = ""; editingSaleId = ""; editingProductId = ""; editingSupplierId = ""; selectedPurchaseIngredientId = ""; save(); render(); };
+    window.setDashboardView = view => { dashboardView = view; render(); };
+    window.setOwnerPeriod = period => { ownerPeriod = period; render(); };
+    window.setPurchasePeriod = period => { purchasePeriod = period; purchases(); };
+    window.setSalesPeriod = period => { salesPeriod = period; salesFilterStart = ""; salesFilterEnd = ""; sales(); };
+    window.setSalesFilter = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); salesPeriod = "custom"; salesFilterStart = f.startDate || ""; salesFilterEnd = f.endDate || ""; sales(); };
+    window.clearSalesFilter = () => { salesPeriod = "all"; salesFilterStart = ""; salesFilterEnd = ""; sales(); };
+    const byId = (list, itemId) => list.find(x => x.id === itemId) || {};
+    const daysUntil = dateText => Math.ceil((new Date(dateText + "T00:00:00") - new Date(new Date().toDateString())) / 86400000);
+    const ingredientTitle = ingredient => `${ingredient.code ? `${ingredient.code} - ` : ""}${ingredient.name || ""}`;
+    const costLabel = ingredient => {
+      if (ingredient.unit === "gr") return `${money(Number(ingredient.costUnit || 0) * 1000)} / kg (${money(ingredient.costUnit)} / gr)`;
+      if (ingredient.unit === "ml") return `${money(Number(ingredient.costUnit || 0) * 1000)} / 1000 ml (${money(ingredient.costUnit)} / ml)`;
+      return `${money(ingredient.costUnit)} / ${ingredient.unit}`;
+    };
+    const ingredientLots = ingredientId => purchaseLots().filter(lot => lot.ingredientId === ingredientId);
+    const nextExpiryLabel = ingredientId => {
+      const lots = ingredientLots(ingredientId).filter(lot => lot.expiryDate && daysUntil(lot.expiryDate) >= 0);
+      if (!lots.length) return "Sin lotes con vencimiento";
+      const lot = lots[0];
+      return `${lot.expiryDate} (${daysUntil(lot.expiryDate)} dia(s))`;
+    };
+    const suggestedPurchaseExpiry = (ingredient, purchaseDate = todayISO()) => {
+      if (!ingredient || ingredient.expirySource === "paquete" || !Number(ingredient.shelfLifeDays || 0)) return "";
+      return dateFrom(purchaseDate, Number(ingredient.shelfLifeDays));
+    };
+    const expiryRuleLabel = ingredient => {
+      if (!ingredient || ingredient.expirySource === "paquete") return "Cargar la fecha real del paquete o etiqueta.";
+      return `Vencimiento sugerido: ${ingredient.shelfLifeDays} dia(s) desde la compra.`;
+    };
+    const productCost = product => (product.recipe || []).reduce((total, item) => total + Number(item.quantity || 0) * Number(byId(state.ingredients, item.ingredientId).costUnit || 0), 0);
+    const productMargin = product => Number(product.price || 0) - productCost(product);
+    const productMarginPercent = product => Number(product.price || 0) > 0 ? productMargin(product) / Number(product.price || 0) * 100 : 0;
+    const productFoodCostPercent = product => Number(product.price || 0) > 0 ? productCost(product) / Number(product.price || 0) * 100 : 0;
+    const productYieldPercent = product => productCost(product) > 0 ? productMargin(product) / productCost(product) * 100 : 0;
+    const todayISO = () => new Date().toISOString().slice(0, 10);
+    const rowsInPeriod = (rows, period) => {
+      if (period === "all" || period === "custom") return rows;
+      const days = Number(period || 1);
+      const start = new Date(new Date().toDateString());
+      start.setDate(start.getDate() - Math.max(days - 1, 0));
+      const startText = start.toISOString().slice(0, 10);
+      const endText = todayISO();
+      return rows.filter(row => row.date >= startText && row.date <= endText);
+    };
+    const salesInPeriod = period => rowsInPeriod(state.sales, period);
+    const purchasesInPeriod = period => rowsInPeriod(state.purchases, period);
+    const urgentPurchaseRows = rows => rows.filter(purchase => purchase.isUrgent);
+    const urgentExtraCost = rows => urgentPurchaseRows(rows).reduce((total, purchase) => {
+      const ingredient = byId(state.ingredients, purchase.ingredientId);
+      const quantity = Number(purchase.quantity || 0);
+      const unitPaid = quantity > 0 ? Number(purchase.totalPrice || 0) / quantity : 0;
+      const referenceUnit = Number(defaultCosts[ingredient.name] || ingredient.costUnit || 0);
+      return total + Math.max(unitPaid - referenceUnit, 0) * quantity;
+    }, 0);
+    const objectiveCurrentValues = () => ({
+      stockBreaks: (state.postImplementationPurchases || []).reduce((total, purchase) => total + Number(purchase.stockBreaks || 0), 0),
+      wasteQuantity: lotWasteTotal(state.postImplementationPurchases || [], state.postImplementationSales || state.sales || [], { products: state.products, ingredients: state.ingredients }).quantity,
+      urgentPurchases: urgentPurchaseRows(state.postImplementationPurchases || []).length
+    });
+    const objectiveProgressRows = () => {
+      const current = objectiveCurrentValues();
+      return Object.entries(objectiveTargets).map(([keyName, config]) => {
+        const baseline = Number(state.objectiveBaseline?.[keyName] || 0);
+        const actual = Number(current[keyName] || 0);
+        const targetValue = baseline * (1 - Number(config.target || 0) / 100);
+        const improvement = baseline > 0 ? (baseline - actual) / baseline * 100 : 0;
+        return {
+          keyName,
+          ...config,
+          baseline,
+          actual,
+          targetValue,
+          improvement,
+          achieved: baseline > 0 && actual <= targetValue
+        };
+      });
+    };
+    const periodLabel = period => ({ "1": "hoy", "7": "ultimos 7 dias", "30": "ultimos 30 dias", "90": "ultimos 90 dias", all: "todo el historial" }[period] || "periodo seleccionado");
+    const salesByDateFilter = () => salesInPeriod(salesPeriod).filter(sale => (!salesFilterStart || sale.date >= salesFilterStart) && (!salesFilterEnd || sale.date <= salesFilterEnd));
+    const salesFilterLabel = () => {
+      if (salesFilterStart && salesFilterEnd) return `del ${salesFilterStart} al ${salesFilterEnd}`;
+      if (salesFilterStart) return `desde ${salesFilterStart}`;
+      if (salesFilterEnd) return `hasta ${salesFilterEnd}`;
+      return periodLabel(salesPeriod);
+    };
+    const periodButtons = (active, handler) => `<div class="actions"><button class="${active === "1" ? "" : "secondary"}" onclick="${handler}('1')">Hoy</button><button class="${active === "7" ? "" : "secondary"}" onclick="${handler}('7')">7 dias</button><button class="${active === "30" ? "" : "secondary"}" onclick="${handler}('30')">30 dias</button><button class="${active === "90" ? "" : "secondary"}" onclick="${handler}('90')">90 dias</button><button class="${active === "all" ? "" : "secondary"}" onclick="${handler}('all')">Todo</button></div>`;
+    const csvValue = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+    const downloadCsv = (filename, rows) => {
+      if (!rows.length) return;
+      const headers = Object.keys(rows[0]);
+      const csv = [headers.join(","), ...rows.map(row => headers.map(header => csvValue(row[header])).join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    const saleReportRows = rows => rows.map(sale => {
+      const product = byId(state.products, sale.productId);
+      const quantity = Number(sale.quantity || 0);
+      const unitCost = productCost(product);
+      return {
+        fecha: sale.date,
+        producto: product.name || "",
+        cantidad: quantity,
+        precio_unitario: Number(product.price || 0),
+        facturacion: Number(product.price || 0) * quantity,
+        costo_estimado: unitCost * quantity,
+        margen_estimado: productMargin(product) * quantity
+      };
+    });
+    const purchaseReportRows = rows => rows.map(purchase => {
+      const ingredient = byId(state.ingredients, purchase.ingredientId);
+      const quantity = Number(purchase.quantity || 0);
+      return {
+        fecha: purchase.date,
+        ingrediente: ingredientTitle(ingredient),
+        cantidad: quantity,
+        unidad: ingredient.unit || "",
+        precio_total: Number(purchase.totalPrice || 0),
+        costo_unitario: quantity > 0 ? Number(purchase.totalPrice || 0) / quantity : 0,
+        vencimiento_lote: purchase.expiryDate || "",
+        tipo_compra: purchase.isUrgent ? "urgente" : "planificada",
+        motivo_urgencia: purchase.urgentReason || ""
+      };
+    });
+    window.downloadSalesReport = () => downloadCsv(`reporte-ventas-${salesFilterLabel().replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.csv`, saleReportRows(salesByDateFilter()));
+    window.downloadPurchasesReport = () => downloadCsv(`reporte-compras-${periodLabel(purchasePeriod).replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.csv`, purchaseReportRows(purchasesInPeriod(purchasePeriod)));
+    window.downloadOwnerReport = () => {
+      const filteredSales = salesInPeriod(ownerPeriod);
+      const rows = productPerformanceRows(filteredSales).map(row => ({
+        periodo: periodLabel(ownerPeriod),
+        producto: row.product.name,
+        unidades_vendidas: row.sold,
+        facturacion: row.revenue,
+        costo_total_estimado: row.totalCost,
+        margen_total_estimado: row.totalMargin,
+        margen_porcentaje: productMarginPercent(row.product)
+      }));
+      downloadCsv(`reporte-panel-ejecutivo-${periodLabel(ownerPeriod).replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.csv`, rows);
+    };
+    const productSalesQuantity = (productId, sales = state.sales) => sales.filter(s => s.productId === productId).reduce((total, sale) => total + Number(sale.quantity || 0), 0);
+    const productPerformanceRows = (sales = state.sales) => state.products.map(product => {
+      const sold = productSalesQuantity(product.id, sales);
+      const unitCost = productCost(product);
+      const unitMargin = productMargin(product);
+      return {
+        product,
+        sold,
+        unitCost,
+        unitMargin,
+        revenue: Number(product.price || 0) * sold,
+        totalCost: unitCost * sold,
+        totalMargin: unitMargin * sold
+      };
+    }).sort((a, b) => b.totalMargin - a.totalMargin);
+    const saleDates = () => [...new Set(state.sales.map(sale => sale.date).filter(Boolean))].sort();
+    const salesOnDates = (productId, dates) => state.sales
+      .filter(sale => sale.productId === productId && dates.includes(sale.date))
+      .reduce((total, sale) => total + Number(sale.quantity || 0), 0);
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const predictionEventBoost = () => {
+      const events = upcomingEvents().filter(event => event.days <= 30);
+      if (!events.length) return { factor: 1, reason: "sin eventos cercanos" };
+      const strongest = events.slice().sort((a, b) => b.factor - a.factor)[0];
+      return { factor: strongest.factor, reason: strongest.name };
+    };
+    const productPredictionRows = () => {
+      const dates = saleDates();
+      const days = Math.max(dates.length, 1);
+      const eventBoost = predictionEventBoost();
+      const recentDates = dates.slice(-3);
+      const previousDates = dates.slice(-6, -3);
+      return state.products.map(product => {
+        const sold = productSalesQuantity(product.id);
+        const dailyAverage = sold / days;
+        const recentAverage = recentDates.length ? salesOnDates(product.id, recentDates) / recentDates.length : dailyAverage;
+        const previousAverage = previousDates.length ? salesOnDates(product.id, previousDates) / previousDates.length : dailyAverage;
+        const trendFactor = previousAverage > 0 ? clamp(recentAverage / previousAverage, 0.75, 1.35) : recentAverage > 0 ? 1.15 : 1;
+        const predictedTomorrow = Math.ceil(dailyAverage * trendFactor * eventBoost.factor);
+        const predictedWeek = Math.ceil(predictedTomorrow * 7);
+        const revenueTomorrow = predictedTomorrow * Number(product.price || 0);
+        const marginTomorrow = predictedTomorrow * productMargin(product);
+        const trend = trendFactor > 1.08 ? "sube" : trendFactor < 0.92 ? "baja" : "estable";
+        return { product, sold, dailyAverage, recentAverage, previousAverage, trendFactor, trend, eventBoost, predictedTomorrow, predictedWeek, revenueTomorrow, marginTomorrow };
+      }).sort((a, b) => b.predictedTomorrow - a.predictedTomorrow);
+    };
+    const predictionSummary = () => {
+      const rows = productPredictionRows();
+      const totalTomorrow = rows.reduce((total, row) => total + row.predictedTomorrow, 0);
+      const revenueTomorrow = rows.reduce((total, row) => total + row.revenueTomorrow, 0);
+      const marginTomorrow = rows.reduce((total, row) => total + row.marginTomorrow, 0);
+      const leader = rows[0];
+      return { rows, totalTomorrow, revenueTomorrow, marginTomorrow, leader };
+    };
+    const futurePurchaseRecommendations = () => {
+      const needed = {};
+      productPredictionRows().forEach(row => {
+        const product = row.product;
+        (product.recipe || []).forEach(item => {
+          const ingredient = byId(state.ingredients, item.ingredientId);
+          if (!ingredient.id) return;
+          needed[ingredient.id] = Number(needed[ingredient.id] || 0) + Number(item.quantity || 0) * Number(row.predictedWeek || 0);
+        });
+      });
+      return state.ingredients.map(ingredient => {
+        const weeklyNeed = Number(needed[ingredient.id] || 0);
+        const targetStock = weeklyNeed + Number(ingredient.minStock || 0);
+        const suggestedQuantity = Math.max(targetStock - Number(ingredient.stock || 0), 0);
+        const estimatedCost = suggestedQuantity * Number(ingredient.costUnit || 0);
+        const affectedProducts = state.products
+          .filter(product => (product.recipe || []).some(item => item.ingredientId === ingredient.id))
+          .map(product => product.name);
+        let reason = "Stock suficiente para la demanda prevista";
+        if (suggestedQuantity > 0) reason = Number(ingredient.stock || 0) <= Number(ingredient.minStock || 0) ? "Stock bajo y demanda futura" : "Demanda futura supera stock disponible";
+        return { ingredient, weeklyNeed, targetStock, suggestedQuantity, estimatedCost, affectedProducts, reason };
+      }).filter(row => row.suggestedQuantity > 0).sort((a, b) => b.estimatedCost - a.estimatedCost);
+    };
+    const maxValue = rows => Math.max(1, ...rows.map(row => Number(row.value || 0)));
+    const chartBar = (label, value, max, detail = "", tone = "") => `<div class="bar-row"><div class="bar-head"><strong>${label}</strong><span>${detail || num(value)}</span></div><div class="bar-track"><div class="bar-fill ${tone}" style="width:${Math.max(3, Math.min(100, Number(value || 0) / max * 100))}%"></div></div></div>`;
+    const low = () => state.ingredients.filter(i => Number(i.stock) <= Number(i.minStock));
+    const affectedProducts = ingredientId => state.products
+      .filter(product => (product.recipe || []).some(item => item.ingredientId === ingredientId))
+      .map(product => product.name);
+    const stockBreakRows = () => state.ingredients
+      .filter(ingredient => Number(ingredient.stock) <= 0 || Number(ingredient.stock) <= Number(ingredient.minStock))
+      .map(ingredient => {
+        const stock = Number(ingredient.stock || 0);
+        const minStock = Number(ingredient.minStock || 0);
+        const missingToMin = Math.max(minStock - stock, 0);
+        const status = stock <= 0 ? { label: "Quiebre", tone: "danger" } : { label: "Riesgo", tone: "warn" };
+        return {
+          ingredient,
+          stock,
+          minStock,
+          missingToMin,
+          products: affectedProducts(ingredient.id),
+          status
+        };
+      })
+      .sort((a, b) => {
+        if (a.status.label !== b.status.label) return a.status.label === "Quiebre" ? -1 : 1;
+        return b.missingToMin - a.missingToMin;
+      });
+    const eventDaysUntil = dateText => daysUntil(dateText);
+    const impactLabel = impact => ({ bajo: "bajo", medio: "medio", alto: "alto" }[impact] || "medio");
+    const eventImpactFactor = impact => ({ bajo: 1.15, medio: 1.3, alto: 1.5 }[impact] || 1.3);
+    const upcomingEvents = () => state.events
+      .filter(event => event.date)
+      .map(event => ({ ...event, days: eventDaysUntil(event.date), factor: eventImpactFactor(event.impact) }))
+      .filter(event => event.days >= 0 && event.days <= Number(event.noticeDays || 30))
+      .sort((a, b) => a.days - b.days);
+    const productsForEvent = () => {
+      const soldRows = productPerformanceRows().filter(row => row.sold > 0).sort((a, b) => b.sold - a.sold);
+      const source = soldRows.length ? soldRows : productPerformanceRows().slice(0, 3);
+      return source.slice(0, 3).map(row => row.product);
+    };
+    const eventStockSuggestions = event => {
+      const ingredients = {};
+      productsForEvent().forEach(product => {
+        (product.recipe || []).forEach(item => {
+          const ingredient = byId(state.ingredients, item.ingredientId);
+          if (!ingredient.id || !ingredient.isCritical) return;
+          ingredients[ingredient.id] = ingredients[ingredient.id] || { ingredient, products: [], extra: 0 };
+          ingredients[ingredient.id].products.push(product.name);
+          ingredients[ingredient.id].extra += Number(item.quantity || 0) * Math.max(event.factor - 1, 0);
+        });
+      });
+      return Object.values(ingredients).slice(0, 5);
+    };
+    const eventNotifications = () => {
+      const events = upcomingEvents().slice(0, 3);
+      if (!events.length) return "";
+      return `<div class="notification-stack">${events.map(event => `<div class="notification ${event.impact === "alto" ? "danger" : ""}"><div><strong>Evento proximo: ${event.name}</strong><span>Faltan ${event.days} dia(s). Preparar stock por impacto ${impactLabel(event.impact)} en ventas.</span></div><button type="button" onclick="tab='events';render()">Ver eventos</button></div>`).join("")}</div>`;
+    };
+    function purchaseLots() {
+      const initialLots = state.ingredients
+        .filter(i => i.expiryDate)
+        .map(i => ({
+          id: `initial-${i.id}`,
+          date: "-",
+          ingredientId: i.id,
+          ingredient: i,
+          quantity: Number(i.stock || 0),
+          expiryDate: i.expiryDate,
+          source: "Stock inicial / ingrediente"
+        }));
+      const purchaseLots = state.purchases
+        .filter(p => p.expiryDate)
+        .map(p => {
+          const ingredient = byId(state.ingredients, p.ingredientId);
+          return {
+            ...p,
+            ingredient,
+            source: "Compra registrada"
+          };
+        });
+      return [...purchaseLots, ...initialLots].sort((a, b) => new Date(`${a.expiryDate}T00:00:00`) - new Date(`${b.expiryDate}T00:00:00`));
+    }
+    const expiring = () => purchaseLots().filter(lot => lot.expiryDate && daysUntil(lot.expiryDate) >= 0 && daysUntil(lot.expiryDate) <= 7);
+    const wasteQuantity = row => {
+      if (row.days !== null && row.days < 0) return Number(row.wasteQuantity || 0);
+      if (row.remainingAtExpiry !== null && row.remainingAtExpiry > 0) return Number(row.remainingAtExpiry || 0);
+      if (row.days !== null && row.days <= 7 && row.dailyUse === 0) return Number(row.lot.quantity || 0);
+      return 0;
+    };
+    const wasteRows = () => expiryRotationRows().filter(row => wasteQuantity(row) > 0 && row.days !== null && row.days <= 7);
+    const alerts = () => [
+      ...(state.warning ? [{ t: "Sin stock suficiente", m: state.warning, c: "danger" }] : []),
+      ...low().map(i => ({ t: "Stock bajo", m: `${ingredientTitle(i)}: ${num(i.stock)} ${i.unit}`, c: "danger" })),
+      ...expiring().map(lot => ({ t: "Proximo a vencer", m: `${ingredientTitle(lot.ingredient)}: lote de ${num(lot.quantity)} ${lot.ingredient.unit} vence en ${daysUntil(lot.expiryDate)} dia(s).`, c: "warn" })),
+      ...wasteRows().map(row => ({ t: row.days < 0 ? "Materia prima perdida" : "Riesgo de desperdicio", m: `${ingredientTitle(row.ingredient)}: ${row.days < 0 ? "lote vencido" : "posible desperdicio"} de ${num(wasteQuantity(row))} ${row.ingredient.unit}.`, c: row.days < 0 ? "danger" : "warn" })),
+      ...upcomingEvents().map(event => ({ t: "Evento importante cercano", m: `${event.name}: faltan ${event.days} dia(s). Revisar stock por impacto ${impactLabel(event.impact)}.`, c: event.impact === "alto" ? "danger" : "warn" }))
+    ];
+    function averageDailyConsumptionByIngredient() {
+      const totals = {};
+      const dates = new Set();
+      state.sales.forEach(sale => {
+        if (sale.date) dates.add(sale.date);
+        const product = byId(state.products, sale.productId);
+        (product.recipe || []).forEach(item => {
+          totals[item.ingredientId] = Number(totals[item.ingredientId] || 0) + Number(item.quantity) * Number(sale.quantity);
+        });
+      });
+      const days = Math.max(dates.size, 1);
+      Object.keys(totals).forEach(ingredientId => { totals[ingredientId] = totals[ingredientId] / days; });
+      return totals;
+    }
+    function expiryRotationRows() {
+      const consumption = averageDailyConsumptionByIngredient();
+      const wasteByLot = Object.fromEntries(lotWasteRows(state.purchases, state.sales, { products: state.products, ingredients: state.ingredients }).map(lot => [lot.id, lot]));
+      return purchaseLots().map(lot => {
+        const ingredient = lot.ingredient;
+        const lotBalance = wasteByLot[lot.id];
+        const remainingNow = lotBalance ? Number(lotBalance.remaining || 0) : Number(lot.quantity || 0);
+        const lostByExpiry = lotBalance ? Number(lotBalance.wasteQuantity || 0) : 0;
+        const days = lot.expiryDate ? daysUntil(lot.expiryDate) : null;
+        const dailyUse = Number(consumption[ingredient.id] || 0);
+        const daysToUseStock = dailyUse > 0 ? remainingNow / dailyUse : null;
+        const remainingAtExpiry = days !== null && dailyUse > 0 ? remainingNow - dailyUse * Math.max(days, 0) : null;
+        let status = { label: "Sin consumo promedio", tone: "warn" };
+        if (days !== null && days < 0 && lostByExpiry > 0) status = { label: "Materia prima perdida", tone: "danger" };
+        else if (days !== null && days < 0) status = { label: "Consumido antes de vencer", tone: "ok" };
+        else if (days !== null && dailyUse > 0 && remainingAtExpiry <= 0) status = { label: "Se consume antes", tone: "ok" };
+        else if (days !== null && days <= 7 && dailyUse === 0) status = { label: "Riesgo alto", tone: "danger" };
+        else if (days !== null && remainingAtExpiry > 0) status = { label: "Riesgo de desperdicio", tone: "warn" };
+        return { lot, ingredient, days, dailyUse, daysToUseStock, remainingNow, remainingAtExpiry, wasteQuantity: lostByExpiry, status };
+      });
+    }
+    function checkSale(productId, qty) {
+      const p = byId(state.products, productId);
+      for (const r of p.recipe || []) {
+        const ing = byId(state.ingredients, r.ingredientId);
+        const needed = Number(r.quantity) * Number(qty);
+        if (Number(ing.stock) < needed) return `Falta ${ing.name}: necesita ${num(needed)} ${ing.unit} y hay ${num(ing.stock)} ${ing.unit}.`;
+      }
+      return "";
+    }
+    function moveSaleStock(sale, direction) {
+      const p = byId(state.products, sale.productId);
+      (p.recipe || []).forEach(r => {
+        const ing = byId(state.ingredients, r.ingredientId);
+        ing.stock = Number(ing.stock) + direction * Number(r.quantity) * Number(sale.quantity);
+      });
+    }
+    function nav() {
+      const eventCount = upcomingEvents().length;
+      return ["owner", "dashboard", "objectives", "sales", "products", "purchases", "ingredients", "suppliers", "events", "ai"].map(x => `<button class="nav ${tab === x ? "active" : ""}" onclick="tab='${x}';render()">${labels[x]}${x === "events" && eventCount ? `<span class="nav-badge">${eventCount}</span>` : ""}</button>`).join("");
+    }
+    const labels = { dashboard: "Dashboard", objectives: "Objetivos", owner: "Panel Ejecutivo", ingredients: "Ingredientes", products: "Productos", suppliers: "Proveedores", purchases: "Compras", sales: "Ventas", events: "Eventos", ai: "Recomendaciones IA" };
+    function layout(content) {
+      const notifications = ["owner", "dashboard"].includes(tab) ? eventNotifications() : "";
+      const cleanNotice = `<div class="notice">Demo limpia de SmartGastro IA: no trae ventas, compras, productos, ingredientes, proveedores ni eventos cargados. Primero cargar Ingredientes, luego Productos, Compras y Ventas.</div>`;
+      document.getElementById("app").innerHTML = `<div class="app"><aside class="side"><div class="brand"><span class="mark"><img src="sg-ai-logo.jpg" alt="SG AI"></span><div><strong>SmartGastro IA</strong><small>Demo limpia</small></div></div>${nav()}</aside><main class="main"><header class="top"><div><p>Gestion independiente con reglas inteligentes</p><h1>${labels[tab]}</h1></div><button class="secondary" onclick="resetDemo()">Limpiar datos</button></header>${cleanNotice}${notifications}${content}</main></div>`;
+    }
+    function dashboard() {
+      const a = alerts();
+      const rotationRows = expiryRotationRows();
+      const waste = wasteRows();
+      const performance = productPerformanceRows();
+      const prediction = predictionSummary();
+      const events = upcomingEvents();
+      const totalRevenue = performance.reduce((total, row) => total + row.revenue, 0);
+      const totalMargin = performance.reduce((total, row) => total + row.totalMargin, 0);
+      const totalSold = performance.reduce((total, row) => total + row.sold, 0);
+      const stockBreaks = stockBreakRows();
+      const dashboardTabs = [
+        ["resumen", "Resumen"],
+        ["ventas", "Ventas y prediccion"],
+        ["stock", "Stock y compras"],
+        ["desperdicio", "Vencimientos y desperdicio"],
+        ["eventos", "Eventos"]
+      ];
+      const tabButtons = `<div class="subnav">${dashboardTabs.map(([idView, label]) => `<button class="${dashboardView === idView ? "active" : ""}" onclick="setDashboardView('${idView}')">${label}</button>`).join("")}</div>`;
+      const metrics = `<div class="metrics"><div class="metric"><span>Productos</span><strong>${state.products.length}</strong></div><div class="metric"><span>Unidades vendidas</span><strong>${num(totalSold)}</strong></div><div class="metric"><span>Facturacion estimada</span><strong>${money(totalRevenue)}</strong></div><div class="metric"><span>Margen estimado</span><strong>${money(totalMargin)}</strong></div><div class="metric"><span>Quiebres/riesgos</span><strong>${stockBreaks.length}</strong></div><div class="metric"><span>Lotes por vencer</span><strong>${expiring().length}</strong></div></div>`;
+      const resumenView = `<div class="split"><div class="panel"><h2>Resumen de alertas</h2>${a.length ? a.slice(0, 8).map(x => `<div class="alert ${x.c}"><strong>${x.t}</strong><span>${x.m}</span></div>`).join("") : "No hay alertas activas."}</div><div class="panel"><h2>Lectura rapida</h2><div class="chart-list"><div class="owner-note"><strong>Venta prevista manana</strong><span>${num(prediction.totalTomorrow)} unidad(es)</span></div><div class="owner-note"><strong>Facturacion prevista</strong><span>${money(prediction.revenueTomorrow)}</span></div><div class="owner-note"><strong>Margen previsto</strong><span>${money(prediction.marginTomorrow)}</span></div><div class="owner-note"><strong>Eventos cercanos</strong><span>${events.length}</span></div></div></div></div>`;
+      const ventasView = `<div class="panel"><h2>Prediccion IA de ventas</h2><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Ventas historicas</th><th>Promedio diario</th><th>Tendencia</th><th>Evento / ajuste</th><th>Prediccion manana</th><th>Prediccion 7 dias</th><th>Margen previsto manana</th></tr></thead><tbody>${prediction.rows.map(row => `<tr><td>${row.product.name}</td><td>${num(row.sold)}</td><td>${num(row.dailyAverage)}</td><td><span class="status ${row.trend === "sube" ? "ok" : row.trend === "baja" ? "warn" : ""}">${row.trend}</span></td><td>${row.eventBoost.reason}<br>Factor ${num(row.eventBoost.factor)}</td><td><strong>${num(row.predictedTomorrow)}</strong></td><td>${num(row.predictedWeek)}</td><td>${money(row.marginTomorrow)}</td></tr>`).join("")}</tbody></table></div><p class="hint">La prediccion toma el historial de ventas, compara los ultimos dias contra los anteriores y ajusta la demanda si hay eventos cercanos de impacto.</p></div><div class="panel"><h2>Ventas, rendimientos y margenes por producto</h2><div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Producto</th><th>Unidades vendidas</th><th>Facturacion</th><th>Costo unitario</th><th>Precio venta</th><th>Costo %</th><th>Margen unitario</th><th>Margen %</th><th>Rendimiento sobre costo</th><th>Margen total</th></tr></thead><tbody>${performance.map(row => `<tr><td>${row.product.code}</td><td>${row.product.name}</td><td><strong>${num(row.sold)}</strong></td><td>${money(row.revenue)}</td><td>${money(row.unitCost)}</td><td>${money(row.product.price)}</td><td>${num(productFoodCostPercent(row.product))}%</td><td>${money(row.unitMargin)}</td><td><span class="status ${row.unitMargin >= 0 ? "ok" : "danger"}">${num(productMarginPercent(row.product))}%</span></td><td>${num(productYieldPercent(row.product))}%</td><td><strong>${money(row.totalMargin)}</strong></td></tr>`).join("")}</tbody></table></div></div>`;
+      const dashboardFutureRecommendations = futurePurchaseRecommendations();
+      const dashboardRecommendationRows = dashboardFutureRecommendations.length ? `<div class="table-wrap"><table><thead><tr><th>Ingrediente</th><th>Necesidad estimada 7 dias</th><th>Stock actual</th><th>Compra sugerida</th><th>Costo estimado</th><th>Motivo</th><th>Productos afectados</th></tr></thead><tbody>${dashboardFutureRecommendations.map(row => `<tr><td>${ingredientTitle(row.ingredient)}</td><td>${num(row.weeklyNeed)} ${row.ingredient.unit}</td><td>${num(row.ingredient.stock)} ${row.ingredient.unit}</td><td><strong>${num(row.suggestedQuantity)} ${row.ingredient.unit}</strong></td><td>${money(row.estimatedCost)}</td><td>${row.reason}</td><td>${row.affectedProducts.join("<br>") || "Sin productos asociados"}</td></tr>`).join("")}</tbody></table></div>` : "No hay compras futuras sugeridas con el stock y la demanda prevista actuales.";
+      const stockView = `<div class="panel"><h2>Reporte de quiebres de stock</h2>${stockBreaks.length ? `<div class="table-wrap"><table><thead><tr><th>Ingrediente</th><th>Estado</th><th>Stock actual</th><th>Stock minimo</th><th>Faltante para minimo</th><th>Productos afectados</th><th>Accion sugerida</th></tr></thead><tbody>${stockBreaks.map(row => `<tr class="${row.status.tone === "danger" ? "bad-row" : ""}"><td>${ingredientTitle(row.ingredient)}</td><td><span class="status ${row.status.tone}">${row.status.label}</span></td><td>${num(row.stock)} ${row.ingredient.unit}</td><td>${num(row.minStock)} ${row.ingredient.unit}</td><td>${num(row.missingToMin)} ${row.ingredient.unit}</td><td>${row.products.length ? row.products.join("<br>") : "Sin productos asociados"}</td><td>${row.status.label === "Quiebre" ? "Comprar urgente / pausar venta asociada" : "Reponer antes de que se corte la venta"}</td></tr>`).join("")}</tbody></table></div>` : "No hay quiebres ni riesgos de stock con los datos actuales."}</div><div class="panel"><h2>Compras sugeridas por prediccion</h2><p class="hint">Calculadas con ventas previstas, recetas, stock actual y stock minimo.</p>${dashboardRecommendationRows}</div>`;
+      const desperdicioView = `<div class="panel"><h2>Aviso de desperdicio de materia prima</h2>${waste.length ? waste.map(row => `<div class="alert ${row.days < 0 ? "danger" : "warn"}"><strong>${ingredientTitle(row.ingredient)}</strong><span>${row.days < 0 ? "Materia prima perdida por vencimiento" : "Riesgo de desperdicio al vencimiento"}: ${num(wasteQuantity(row))} ${row.ingredient.unit}. Lote: ${row.lot.source} ${row.lot.date || ""}.</span></div>`).join("") : "No hay desperdicio estimado con los datos actuales."}</div><div class="panel"><h2>Indicador de vencimiento y rotacion por lote</h2><div class="table-wrap"><table><thead><tr><th>Ingrediente</th><th>Lote / origen</th><th>Cantidad original</th><th>Saldo estimado</th><th>Vence en</th><th>Consumo diario promedio</th><th>Dias para consumir saldo</th><th>Saldo estimado al vencer</th><th>Estado</th></tr></thead><tbody>${rotationRows.map(row => `<tr><td>${ingredientTitle(row.ingredient)}</td><td>${row.lot.source}<br>${row.lot.date || "-"}</td><td>${num(row.lot.quantity)} ${row.ingredient.unit}</td><td>${num(row.remainingNow)} ${row.ingredient.unit}</td><td>${row.days === null ? "-" : `${row.days} dia(s)`}</td><td>${num(row.dailyUse)} ${row.ingredient.unit}</td><td>${row.daysToUseStock === null ? "Sin dato" : `${num(row.daysToUseStock)} dia(s)`}</td><td>${row.remainingAtExpiry === null ? "Sin dato" : `${num(Math.max(row.remainingAtExpiry, 0))} ${row.ingredient.unit}`}</td><td><span class="status ${row.status.tone}">${row.status.label}</span></td></tr>`).join("")}</tbody></table></div></div>`;
+      const eventosView = `<div class="panel"><h2>Eventos proximos para preparar stock</h2>${events.length ? events.map(event => `<div class="alert ${event.impact === "alto" ? "danger" : "warn"}"><strong>${event.name}</strong><span>${event.category} en ${event.days} dia(s). Impacto esperado: ${impactLabel(event.impact)}.</span></div>`).join("") : "Sin eventos dentro del periodo de anticipacion."}</div><div class="panel"><h2>Preparacion sugerida por eventos</h2>${events.length ? events.slice(0, 5).map(event => `<div class="rec"><strong>${event.name}</strong><span>${eventStockSuggestions(event).length ? eventStockSuggestions(event).map(row => `${ingredientTitle(row.ingredient)} por ${row.products.join(", ")}`).join("<br>") : "Revisar productos mas vendidos y stock critico."}</span></div>`).join("") : "Sin preparacion especial pendiente."}</div>`;
+      const views = { resumen: resumenView, ventas: ventasView, stock: stockView, desperdicio: desperdicioView, eventos: eventosView };
+      layout(`<section class="grid">${metrics}${tabButtons}${views[dashboardView] || resumenView}</section>`);
+    }
+    function objectives() {
+      const progressRows = objectiveProgressRows();
+      const previousSales = (state.preImplementationSales || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const previousSaleDates = [...new Set(previousSales.map(sale => sale.date))];
+      const predictionRows = state.products.map(product => {
+        const sold = previousSales.filter(sale => sale.productId === product.id).reduce((total, sale) => total + Number(sale.quantity || 0), 0);
+        const dailyAverage = previousSaleDates.length ? sold / previousSaleDates.length : 0;
+        const predictedWeek = Math.ceil(dailyAverage * 7);
+        return { product, sold, dailyAverage, predictedWeek };
+      }).sort((a, b) => b.predictedWeek - a.predictedWeek);
+      const predictionTable = `<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Ventas previas 60 dias</th><th>Promedio diario</th><th>Prediccion semanal</th><th>Uso para compras</th></tr></thead><tbody>${predictionRows.map(row => `<tr><td>${row.product.name}</td><td>${num(row.sold)}</td><td>${num(row.dailyAverage)}</td><td><strong>${num(row.predictedWeek)}</strong></td><td>${(row.product.recipe || []).map(item => { const ingredient = byId(state.ingredients, item.ingredientId); return `${ingredientTitle(ingredient)}: ${num(Number(item.quantity || 0) * row.predictedWeek)} ${ingredient.unit}`; }).join("<br>")}</td></tr>`).join("")}</tbody></table></div>`;
+      const baselineInputs = progressRows.map(row => `<label><span>${row.baselineLabel}</span><input name="${row.keyName}" type="text" inputmode="decimal" value="${formNumber(row.baseline)}" required></label>`).join("");
+      const objectiveCards = `<div class="objective-cards">${progressRows.map(row => {
+        const achieved = row.achieved;
+        const progress = row.target > 0 ? Math.max(3, Math.min(100, row.improvement / row.target * 100)) : 0;
+        const reduction = row.baseline - row.actual;
+        const statusText = achieved ? "Meta alcanzada" : "En seguimiento";
+        const summary = achieved
+          ? `Bueno: se redujo ${num(reduction)} ${row.unit} y se supero la meta de ${num(row.target)}%.`
+          : `Atencion: falta mejorar ${num(Math.max(row.actual - row.targetValue, 0))} ${row.unit} para cumplir la meta.`;
+        return `<div class="objective-card ${achieved ? "" : "warn"}"><div><h3>${row.label}</h3><span class="status ${achieved ? "ok" : "warn"}">${statusText}</span></div><div class="big">${num(row.improvement)}%</div><p class="summary">${summary}</p><div class="objective-stats"><div><span>Antes</span><strong>${num(row.baseline)} ${row.unit}</strong></div><div><span>Ahora</span><strong>${num(row.actual)} ${row.unit}</strong></div><div><span>Meta max.</span><strong>${num(row.targetValue)} ${row.unit}</strong></div></div><div class="bar-row"><div class="bar-head"><strong>Avance sobre la meta</strong><span>${num(progress)}%</span></div><div class="bar-track"><div class="bar-fill ${achieved ? "" : "warn"}" style="width:${progress}%"></div></div></div></div>`;
+      }).join("")}</div>`;
+      const rows = `<div class="table-wrap"><table><thead><tr><th>Objetivo</th><th>Linea base</th><th>Meta objetivo</th><th>Medicion actual</th><th>Mejora lograda</th><th>Estado</th></tr></thead><tbody>${progressRows.map(row => `<tr><td><strong>${row.label}</strong><br>Reducir ${row.target}%</td><td>${num(row.baseline)} ${row.unit}</td><td>${num(row.targetValue)} ${row.unit}</td><td>${num(row.actual)} ${row.unit}</td><td>${num(row.improvement)}%</td><td><span class="status ${row.achieved ? "ok" : "warn"}">${row.achieved ? "Meta alcanzada" : "En seguimiento"}</span></td></tr>`).join("")}</tbody></table></div>`;
+      const objectivePanel = `<div class="panel"><h2>Objetivos estipulados</h2><p class="hint">Lectura rapida: verde significa que la app ya esta mejor que la meta definida; amarillo significa que todavia falta reducir mas.</p>${objectiveCards}${rows}</div><div class="split"><div class="panel"><h2>Linea base editable</h2><form class="form" onsubmit="saveObjectives(event)">${baselineInputs}<p class="hint">La linea base resume el comportamiento previo. Las compras detalladas se consultan en la seccion Compras.</p><div class="actions"><button>Guardar linea base</button></div></form></div><div class="panel"><h2>Como se comprueba</h2><div class="table-wrap"><table><thead><tr><th>Objetivo</th><th>Indicador que toma la app</th><th>Como mejora</th></tr></thead><tbody><tr><td>Disminuir quiebres de stock 30%</td><td>Cantidad de ingredientes en quiebre o riesgo contra la linea base.</td><td>Recomendaciones de compra, stock minimo, eventos y alertas anticipadas.</td></tr><tr><td>Reducir desperdicio 40%</td><td>Saldo de cada lote que llega a su fecha de vencimiento sin haberse consumido por ventas.</td><td>Control por lote, fechas de vencimiento, consumo por receta y avisos para priorizar uso.</td></tr><tr><td>Reducir compras urgentes 25%</td><td>Compras marcadas como urgentes desde la implementacion.</td><td>Registro de motivos, sobrecostos, demanda prevista y planificacion de compras.</td></tr></tbody></table></div></div></div>`;
+      const predictionPanel = `<div class="panel"><h2>Ventas previas y prediccion usada por la app</h2><p class="hint">El historial de ventas previo permite entender la demanda que generaba las compras. La app usa ese patron para sugerir compras mas planificadas despues de la implementacion.</p>${predictionTable}</div>`;
+      layout(`<section class="grid"><div class="notice">La seccion Objetivos muestra el desempeño contra las metas y la prediccion que justifica la planificacion. Los movimientos de compras quedan en la seccion Compras.</div>${objectivePanel}${predictionPanel}</section>`);
+    }
+    function ownerDashboard() {
+      const filteredSales = salesInPeriod(ownerPeriod);
+      const performance = productPerformanceRows(filteredSales);
+      const label = periodLabel(ownerPeriod);
+      const stockBreaks = stockBreakRows();
+      const waste = wasteRows();
+      const totalRevenue = performance.reduce((total, row) => total + row.revenue, 0);
+      const totalCost = performance.reduce((total, row) => total + row.totalCost, 0);
+      const totalMargin = performance.reduce((total, row) => total + row.totalMargin, 0);
+      const totalSold = performance.reduce((total, row) => total + row.sold, 0);
+      const marginPercent = totalRevenue > 0 ? totalMargin / totalRevenue * 100 : 0;
+      const averageSoldPrice = totalSold > 0 ? totalRevenue / totalSold : 0;
+      const bestSeller = performance.slice().sort((a, b) => b.sold - a.sold)[0];
+      const events = upcomingEvents();
+      const salesRows = performance.map(row => ({ label: row.product.name, value: row.sold, detail: `${num(row.sold)} unid.` })).filter(row => row.value > 0);
+      const revenueRows = performance.map(row => ({ label: row.product.name, value: row.revenue, detail: money(row.revenue) })).filter(row => row.value > 0);
+      const marginRows = performance.map(row => ({ label: row.product.name, value: Math.max(row.totalMargin, 0), detail: money(row.totalMargin), tone: row.totalMargin < 0 ? "danger" : "" })).filter(row => row.value > 0 || row.tone);
+      const maxSales = maxValue(salesRows);
+      const maxRevenue = maxValue(revenueRows);
+      const maxMargin = maxValue(marginRows);
+      const periodFilter = `<div class="panel">${periodButtons(ownerPeriod, "setOwnerPeriod")}<p class="hint">Los indicadores ejecutivos se calculan sobre ${label}. Las alertas de stock, desperdicio y eventos se muestran como estado actual.</p><div class="report-actions"><button type="button" onclick="downloadOwnerReport()">Descargar reporte</button></div></div>`;
+      layout(`<section class="grid">${periodFilter}<div class="metrics"><div class="metric"><span>Facturacion (${label})</span><strong>${money(totalRevenue)}</strong></div><div class="metric"><span>Margen (${label})</span><strong>${money(totalMargin)}</strong></div><div class="metric"><span>Unidades vendidas</span><strong>${num(totalSold)}</strong></div><div class="metric"><span>Margen promedio</span><strong>${num(marginPercent)}%</strong></div><div class="metric"><span>Precio promedio vendido</span><strong>${money(averageSoldPrice)}</strong></div><div class="metric"><span>Alertas actuales</span><strong>${stockBreaks.length + waste.length + events.length}</strong></div></div><div class="owner-grid"><div class="panel"><h2>Productos mas vendidos (${label})</h2><div class="chart-list">${salesRows.length ? salesRows.map(row => chartBar(row.label, row.value, maxSales, row.detail)).join("") : `Todavia no hay ventas cargadas en ${label}.`}</div></div><div class="panel"><h2>Facturacion por producto (${label})</h2><div class="chart-list">${revenueRows.length ? revenueRows.map(row => chartBar(row.label, row.value, maxRevenue, row.detail)).join("") : `Todavia no hay facturacion cargada en ${label}.`}</div></div><div class="panel"><h2>Margen generado por producto (${label})</h2><div class="chart-list">${marginRows.length ? marginRows.map(row => chartBar(row.label, row.value, maxMargin, row.detail, row.tone)).join("") : `Todavia no hay margen generado en ${label}.`}</div></div><div class="panel"><h2>Estado del negocio (${label})</h2><div class="chart-list"><div class="owner-note"><strong>Producto mas vendido</strong><span>${bestSeller && bestSeller.sold > 0 ? `${bestSeller.product.name} (${num(bestSeller.sold)})` : "Sin ventas"}</span></div><div class="owner-note"><strong>Costo total estimado</strong><span>${money(totalCost)}</span></div><div class="owner-note"><strong>Registros de venta</strong><span>${num(filteredSales.length)}</span></div><div class="owner-note"><strong>Alertas actuales</strong><span>${stockBreaks.length + waste.length + events.length}</span></div></div></div></div><div class="owner-grid"><div class="panel"><h2>Eventos proximos para preparar stock</h2>${events.length ? events.slice(0, 5).map(event => `<div class="alert ${event.impact === "alto" ? "danger" : "warn"}"><strong>${event.name}</strong><span>${event.category} en ${event.days} dia(s). Anticipacion configurada: ${event.noticeDays} dia(s). Impacto esperado: ${impactLabel(event.impact)}.</span></div>`).join("") : "Sin eventos dentro del periodo de anticipacion."}</div><div class="panel"><h2>Alertas para decidir</h2>${stockBreaks.length ? stockBreaks.slice(0, 5).map(row => `<div class="alert ${row.status.tone}"><strong>${row.status.label}: ${ingredientTitle(row.ingredient)}</strong><span>Faltan ${num(row.missingToMin)} ${row.ingredient.unit}. Afecta: ${row.products.length ? row.products.join(", ") : "sin productos asociados"}.</span></div>`).join("") : "Sin quiebres ni riesgos de stock."}</div></div><div class="owner-grid"><div class="panel"><h2>Desperdicio y vencimientos</h2>${waste.length ? waste.slice(0, 5).map(row => `<div class="alert ${row.days < 0 ? "danger" : "warn"}"><strong>${ingredientTitle(row.ingredient)}</strong><span>${row.days < 0 ? "Perdido por vencimiento" : "Riesgo de desperdicio"}: ${num(wasteQuantity(row))} ${row.ingredient.unit}.</span></div>`).join("") : "Sin desperdicio estimado con los datos actuales."}</div><div class="panel"><h2>Preparacion sugerida por eventos</h2>${events.length ? events.slice(0, 3).map(event => `<div class="rec"><strong>${event.name}</strong><span>${eventStockSuggestions(event).length ? eventStockSuggestions(event).map(row => `${ingredientTitle(row.ingredient)} por ${row.products.join(", ")}`).join("<br>") : "Revisar productos mas vendidos y stock critico."}</span></div>`).join("") : "Sin preparacion especial pendiente."}</div></div></section>`);
+    }
+    function ingredients() {
+      const item = editingIngredientId ? byId(state.ingredients, editingIngredientId) : {};
+      const unitOptions = ["kg", "gr", "ml", "unidad"].map(unit => `<option ${unit === (item.unit || "gr") ? "selected" : ""}>${unit}</option>`).join("");
+      const criticalOptions = [{ value: "true", label: "Critico" }, { value: "false", label: "No critico" }].map(option => `<option value="${option.value}" ${String(Boolean(item.isCritical)) === option.value ? "selected" : ""}>${option.label}</option>`).join("");
+      const foodGroupOptions = ["lacteos", "verduras", "panificados", "proteinas", "no perecedero", "otros"].map(group => `<option ${group === (item.foodGroup || "otros") ? "selected" : ""}>${group}</option>`).join("");
+      const ingredientRows = items => items.length ? items.map(i => `<tr class="${Number(i.stock) <= Number(i.minStock) ? "bad-row" : ""}"><td><strong>${i.code || "-"}</strong></td><td>${i.name}</td><td>${i.foodGroup || "-"}</td><td>${num(i.stock)} ${i.unit}</td><td>${num(i.minStock)} ${i.unit}</td><td>${costLabel(i)}</td><td>${i.expirySource === "paquete" ? "Fecha de paquete" : `${i.shelfLifeDays} dia(s)`}</td><td>${nextExpiryLabel(i.id)}</td><td>${ingredientLots(i.id).length}</td><td><button class="text" onclick="editIngredient('${i.id}')">Editar</button><button class="text danger" onclick="removeItem('ingredients','${i.id}')">Eliminar</button></td></tr>`).join("") : `<tr><td colspan="10">Todavia no hay ingredientes en este grupo.</td></tr>`;
+      const ingredientTable = items => `<div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Nombre</th><th>Familia</th><th>Stock total</th><th>Minimo</th><th>Costo de referencia</th><th>Criterio vencimiento</th><th>Proximo vencimiento por lote</th><th>Lotes</th><th></th></tr></thead><tbody>${ingredientRows(items)}</tbody></table></div>`;
+      const criticalIngredients = state.ingredients.filter(i => i.isCritical);
+      const regularIngredients = state.ingredients.filter(i => !i.isCritical);
+      layout(`<section class="split"><div class="panel"><h2>${editingIngredientId ? "Editar ingrediente" : "Agregar ingrediente"}</h2><form class="form" onsubmit="addIngredient(event)"><label><span>Codigo</span><input name="code" value="${item.code || ""}" placeholder="ING-001" required></label><label><span>Nombre</span><input name="name" value="${item.name || ""}" required></label><label><span>Familia de alimento</span><select name="foodGroup">${foodGroupOptions}</select></label><p class="hint">Lacteos, verduras, panificados y proteinas se consideran perecederos y quedan como criticos automaticamente.</p><label><span>Tipo de alimento</span><select name="isCritical">${criticalOptions}</select></label><label><span>Unidad de stock</span><select name="unit">${unitOptions}</select></label><label><span>Stock actual</span><input name="stock" type="text" inputmode="decimal" value="${formNumber(item.stock)}" required></label><label><span>Stock minimo</span><input name="minStock" type="text" inputmode="decimal" value="${formNumber(item.minStock)}" required></label><label><span>Costo por unidad de stock</span><input name="costUnit" type="text" inputmode="decimal" value="${formNumber(item.costUnit)}" required></label><p class="hint">Ejemplo: si Carne se maneja en gr y el kg cuesta $10.000, cargar costo unitario $10 por gr. Un medallon de 150 gr costara $1.500 en la receta.</p><label><span>Vencimiento base / stock inicial</span><input name="expiryDate" type="date" value="${item.expiryDate || ""}"></label><p class="hint">Este campo es opcional y solo representa el stock inicial. Para analizar vencimientos reales, usar los lotes generados en Compras y el indicador del Dashboard.</p><div class="actions"><button>${editingIngredientId ? "Guardar cambios" : "Agregar"}</button>${editingIngredientId ? `<button class="secondary" type="button" onclick="cancelIngredientEdit()">Cancelar</button>` : ""}</div></form></div><div class="grid"><div class="panel"><h2>Alimentos criticos</h2>${ingredientTable(criticalIngredients)}</div><div class="panel"><h2>Alimentos no criticos</h2>${ingredientTable(regularIngredients)}</div><p class="hint">La fecha mostrada es el vencimiento mas cercano entre el stock inicial y las compras/lotes cargados.</p></div></section>`);
+    }
+    function products() {
+      const item = editingProductId ? byId(state.products, editingProductId) : {};
+      const categoryOptions = ["comida", "bebida", "postre", "cafeteria", "otro"].map(category => `<option ${category === (item.category || "comida") ? "selected" : ""}>${category}</option>`).join("");
+      const recipeInputs = state.ingredients.map(ingredient => {
+        const recipeItem = (item.recipe || []).find(r => r.ingredientId === ingredient.id) || {};
+        return `<tr><td>${ingredientTitle(ingredient)}</td><td>${ingredient.unit}</td><td><input name="recipe-${ingredient.id}" type="text" inputmode="decimal" value="${formNumber(recipeItem.quantity)}" placeholder="0"></td><td>${costLabel(ingredient)}</td></tr>`;
+      }).join("");
+      layout(`<section class="split"><div class="panel"><h2>${editingProductId ? "Editar producto" : "Agregar producto"}</h2><form class="form" onsubmit="addProduct(event)"><label><span>Codigo</span><input name="code" value="${item.code || ""}" required></label><label><span>Nombre</span><input name="name" value="${item.name || ""}" required></label><label><span>Precio de venta</span><input name="price" type="text" inputmode="decimal" value="${formNumber(item.price)}" required></label><label><span>Categoria</span><select name="category">${categoryOptions}</select></label><div><h2>Receta del producto</h2><p class="hint">Cargar la cantidad usada de cada ingrediente por una unidad del producto. Dejar vacio o 0 si no corresponde.</p><div class="table-wrap"><table><thead><tr><th>Ingrediente</th><th>Unidad</th><th>Cantidad usada</th><th>Costo referencia</th></tr></thead><tbody>${recipeInputs}</tbody></table></div></div><div class="actions"><button>${editingProductId ? "Guardar cambios" : "Agregar"}</button>${editingProductId ? `<button class="secondary" type="button" onclick="cancelProductEdit()">Cancelar</button>` : ""}</div></form></div><div class="panel"><h2>Productos: costo y precio de venta</h2><div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Producto</th><th>Categoria</th><th>Costo confeccion</th><th>Precio venta</th><th>Margen $</th><th>Margen sobre venta</th><th>Rentabilidad sobre costo</th><th>Receta</th><th></th></tr></thead><tbody>${state.products.map(p => `<tr><td>${p.code}</td><td>${p.name}</td><td>${p.category}</td><td>${money(productCost(p))}</td><td>${money(p.price)}</td><td><strong>${money(productMargin(p))}</strong></td><td>${num(productMarginPercent(p))}%</td><td>${num(productYieldPercent(p))}%</td><td>${(p.recipe || []).map(r => { const ing = byId(state.ingredients, r.ingredientId); return `${ingredientTitle(ing)}: ${num(r.quantity)} ${ing.unit} (${money(Number(r.quantity) * Number(ing.costUnit || 0))})`; }).join("<br>") || "Sin receta"}</td><td><button class="text" onclick="editProduct('${p.id}')">Editar</button><button class="text danger" onclick="deleteProduct('${p.id}')">Eliminar</button></td></tr>`).join("")}</tbody></table></div></div></section>`);
+    }
+    function suppliers() {
+      const item = editingSupplierId ? byId(state.suppliers, editingSupplierId) : {};
+      const categoryOptions = ["carnes", "verduras", "panificados", "bebidas", "lacteos", "otros"].map(category => `<option ${category === (item.category || "otros") ? "selected" : ""}>${category}</option>`).join("");
+      layout(`<section class="split"><div class="panel"><h2>${editingSupplierId ? "Editar proveedor" : "Agregar proveedor"}</h2><form class="form" onsubmit="addSupplier(event)"><label><span>Nombre</span><input name="name" value="${item.name || ""}" required></label><label><span>Rubro</span><select name="category">${categoryOptions}</select></label><label><span>Telefono</span><input name="phone" value="${item.phone || ""}"></label><label><span>Email</span><input name="email" type="email" value="${item.email || ""}"></label><label><span>Precio de referencia</span><input name="referencePrice" type="text" inputmode="decimal" value="${formNumber(item.referencePrice)}"></label><div class="actions"><button>${editingSupplierId ? "Guardar cambios" : "Agregar"}</button>${editingSupplierId ? `<button class="secondary" type="button" onclick="cancelSupplierEdit()">Cancelar</button>` : ""}</div></form></div><div class="panel"><h2>Proveedores</h2><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Rubro</th><th>Telefono</th><th>Email</th><th>Referencia</th><th></th></tr></thead><tbody>${state.suppliers.map(s => `<tr><td>${s.name}</td><td>${s.category}</td><td>${s.phone}</td><td>${s.email}</td><td>${money(s.referencePrice)}</td><td><button class="text" onclick="editSupplier('${s.id}')">Editar</button><button class="text danger" onclick="deleteSupplier('${s.id}')">Eliminar</button></td></tr>`).join("")}</tbody></table></div></div></section>`);
+    }
+    function purchases() {
+      const item = editingPurchaseId ? byId(state.purchases, editingPurchaseId) : {};
+      const selectedIngredientId = item.ingredientId || selectedPurchaseIngredientId || state.ingredients[0]?.id || "";
+      const selectedIngredient = byId(state.ingredients, selectedIngredientId);
+      const selectedUnit = selectedIngredient.unit || "unidad";
+      const purchaseDate = item.date || todayISO();
+      const suggestedExpiry = item.expiryDate || suggestedPurchaseExpiry(selectedIngredient, purchaseDate);
+      const ingredientOptions = state.ingredients.map(i => `<option value="${i.id}" ${i.id === selectedIngredientId ? "selected" : ""}>${ingredientTitle(i)} (${i.unit})</option>`).join("");
+      const filteredPurchases = purchasesInPeriod(purchasePeriod).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const totalPaid = filteredPurchases.reduce((total, purchase) => total + Number(purchase.totalPrice || 0), 0);
+      const lotsWithExpiry = filteredPurchases.filter(purchase => purchase.expiryDate).length;
+      const urgentPurchases = urgentPurchaseRows(filteredPurchases);
+      const urgentTotalPaid = urgentPurchases.reduce((total, purchase) => total + Number(purchase.totalPrice || 0), 0);
+      const urgentShare = filteredPurchases.length ? urgentPurchases.length / filteredPurchases.length * 100 : 0;
+      const urgentImpact = urgentExtraCost(filteredPurchases);
+      const urgentByIngredient = Object.values(urgentPurchases.reduce((acc, purchase) => {
+        const ingredient = byId(state.ingredients, purchase.ingredientId);
+        const key = purchase.ingredientId;
+        acc[key] = acc[key] || { ingredient, count: 0, total: 0, reasons: new Set() };
+        acc[key].count += 1;
+        acc[key].total += Number(purchase.totalPrice || 0);
+        if (purchase.urgentReason) acc[key].reasons.add(purchase.urgentReason);
+        return acc;
+      }, {}));
+      const futureRecommendations = futurePurchaseRecommendations();
+      const recommendationRows = futureRecommendations.length ? `<div class="table-wrap"><table><thead><tr><th>Ingrediente</th><th>Necesidad estimada 7 dias</th><th>Stock actual</th><th>Compra sugerida</th><th>Costo estimado</th><th>Motivo</th><th>Productos afectados</th></tr></thead><tbody>${futureRecommendations.map(row => `<tr><td>${ingredientTitle(row.ingredient)}</td><td>${num(row.weeklyNeed)} ${row.ingredient.unit}</td><td>${num(row.ingredient.stock)} ${row.ingredient.unit}</td><td><strong>${num(row.suggestedQuantity)} ${row.ingredient.unit}</strong></td><td>${money(row.estimatedCost)}</td><td>${row.reason}</td><td>${row.affectedProducts.join("<br>") || "Sin productos asociados"}</td></tr>`).join("")}</tbody></table></div>` : "No hay compras futuras sugeridas con el stock y la demanda prevista actuales.";
+      const urgentOptions = [{ value: "false", label: "Planificada" }, { value: "true", label: "Urgente" }].map(option => `<option value="${option.value}" ${String(Boolean(item.isUrgent)) === option.value ? "selected" : ""}>${option.label}</option>`).join("");
+      const urgentImpactRows = urgentPurchases.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Ingrediente</th><th>Cantidad</th><th>Total pagado</th><th>Sobrecosto estimado</th><th>Motivo registrado</th></tr></thead><tbody>${urgentPurchases.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map(purchase => { const ingredient = byId(state.ingredients, purchase.ingredientId); const quantity = Number(purchase.quantity || 0); const unitPaid = quantity > 0 ? Number(purchase.totalPrice || 0) / quantity : 0; const referenceUnit = Number(defaultCosts[ingredient.name] || ingredient.costUnit || 0); const extraCost = Math.max(unitPaid - referenceUnit, 0) * quantity; return `<tr class="bad-row"><td>${purchase.date || "-"}</td><td>${ingredientTitle(ingredient)}</td><td>${num(quantity)} ${ingredient.unit || ""}</td><td>${money(purchase.totalPrice)}</td><td>${money(extraCost)}</td><td>${purchase.urgentReason || "-"}</td></tr>`; }).join("")}</tbody></table></div>` : "No hay compras urgentes en el periodo seleccionado.";
+      const rows = filteredPurchases.length ? `<div class="table-wrap"><table><thead><tr><th>Acciones</th><th>Fecha</th><th>Ingrediente</th><th>Cantidad de ingrediente comprada</th><th>Precio total pagado</th><th>Vencimiento de paquete / lote</th><th>Costo unitario generado</th><th>Tipo</th><th>Decision / aviso</th><th>Motivo urgencia</th></tr></thead><tbody>${filteredPurchases.map(p => { const ing = byId(state.ingredients, p.ingredientId); return `<tr class="${p.isUrgent ? "bad-row" : ""}"><td><button class="text" onclick="editPurchase('${p.id}')">Editar</button><button class="text danger" onclick="deletePurchase('${p.id}')">Eliminar</button></td><td>${p.date}</td><td>${ingredientTitle(ing)}</td><td>${num(p.quantity)} ${ing.unit || ""}</td><td>${money(p.totalPrice)}</td><td>${p.expiryDate || "-"}</td><td>${Number(p.quantity) > 0 ? `${money(Number(p.totalPrice) / Number(p.quantity))} / ${ing.unit || "unidad"}` : "-"}</td><td><span class="status ${p.isUrgent ? "danger" : "ok"}">${p.isUrgent ? "Urgente" : "Planificada"}</span></td><td>${p.problemType || "-"}${p.alertUsed ? `<br><span class="hint">${p.alertUsed}</span>` : ""}</td><td>${p.urgentReason || "-"}</td></tr>`; }).join("")}</tbody></table></div>` : "No hay compras para el periodo seleccionado.";
+      const previousPurchases = (state.preImplementationPurchases || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const previousWasteRows = lotWasteRows(previousPurchases, state.preImplementationSales || [], { products: state.products, ingredients: state.ingredients });
+      const previousWasteByPurchase = Object.fromEntries(previousWasteRows.map(row => [row.id, row]));
+      const previousRows = previousPurchases.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Ingrediente</th><th>Cantidad</th><th>Total pagado</th><th>Vencimiento lote</th><th>Error detectado</th><th>Urgencia / motivo</th><th>Quiebres</th><th>Desperdicio por vencimiento</th><th>Perdida estimada</th></tr></thead><tbody>${previousPurchases.map(purchase => { const ingredient = byId(state.ingredients, purchase.ingredientId); const waste = previousWasteByPurchase[purchase.id] || {}; return `<tr class="${purchase.isUrgent ? "bad-row" : ""}"><td>${purchase.date}</td><td>${ingredientTitle(ingredient)}</td><td>${num(purchase.quantity)} ${ingredient.unit || ""}</td><td>${money(purchase.totalPrice)}</td><td>${purchase.expiryDate || "-"}</td><td>${purchase.problemType || "-"}</td><td><span class="status ${purchase.isUrgent ? "danger" : "warn"}">${purchase.isUrgent ? "Urgente" : "Planificada con error"}</span><br>${purchase.urgentReason || "-"}</td><td>${num(purchase.stockBreaks || 0)}</td><td>${num(waste.wasteQuantity || 0)} ${ingredient.unit || ""}</td><td>${money(waste.wasteValue || 0)}</td></tr>`; }).join("")}</tbody></table></div>` : "Todavia no hay compras previas cargadas.";
+      const previousHistoryPanel = `<div class="panel"><h2>Historial previo a la implementacion</h2><p class="hint">Referencia secundaria para comparar contra la situacion posterior al 01/05/2026. No modifica el stock actual ni se mezcla con las compras registradas desde la app.</p>${previousRows}</div>`;
+      layout(`<section class="grid"><div class="split"><div class="panel"><h2>${editingPurchaseId ? "Editar compra" : "Registrar compra"}</h2><form class="form" onsubmit="addPurchase(event)"><label><span>Fecha</span><input name="date" type="date" value="${purchaseDate}"></label><label><span>Ingrediente</span><select name="ingredientId" onchange="selectPurchaseIngredient(this.value)">${ingredientOptions}</select></label><label><span>Cantidad de ingrediente comprada (${selectedUnit})</span><input name="quantity" type="text" inputmode="decimal" value="${formNumber(item.quantity)}" required></label><p class="hint">Usar la misma unidad de medida que en Ingredientes. Si Carne esta en gr y compras 10 kg, cargar 10000 gr.</p><label><span>Precio total pagado</span><input name="totalPrice" type="text" inputmode="decimal" value="${formNumber(item.totalPrice)}" required></label><p class="hint">Con estos datos el sistema calcula el costo unitario: precio total pagado / cantidad comprada en ${selectedUnit}.</p><label><span>Vencimiento de paquete / lote</span><input name="expiryDate" type="date" value="${suggestedExpiry}"></label><p class="hint">${expiryRuleLabel(selectedIngredient)} Si el paquete trae una fecha distinta, usar siempre la fecha real del paquete.</p><label><span>Tipo de compra</span><select name="isUrgent">${urgentOptions}</select></label><label><span>Motivo si fue urgente</span><input name="urgentReason" value="${item.urgentReason || ""}" placeholder="Ej: quiebre de stock, proveedor habitual sin entrega"></label><p class="hint">Marcar una compra como urgente permite medir compras fuera de plan, impacto economico y causas para anticiparlas mejor.</p><div class="actions"><button>${editingPurchaseId ? "Guardar cambios" : "Registrar compra"}</button>${editingPurchaseId ? `<button class="secondary" type="button" onclick="cancelPurchaseEdit()">Cancelar</button>` : ""}</div></form></div><div class="panel"><h2>Recomendaciones de compra futura</h2><p class="hint">Calculadas con la prediccion de ventas de los proximos 7 dias, recetas, stock actual y stock minimo.</p>${recommendationRows}</div></div><div class="panel"><h2>Impacto de compras urgentes</h2><div class="metrics"><div class="metric"><span>Compras urgentes</span><strong>${num(urgentPurchases.length)}</strong></div><div class="metric"><span>Peso sobre compras</span><strong>${num(urgentShare)}%</strong></div><div class="metric"><span>Total urgente pagado</span><strong>${money(urgentTotalPaid)}</strong></div><div class="metric"><span>Sobrecosto estimado</span><strong>${money(urgentImpact)}</strong></div></div><p class="hint">El sobrecosto estimado compara el costo unitario pagado contra el costo de referencia del ingrediente. Sirve para detectar compras de ultimo momento que salen mas caras.</p>${urgentImpactRows}</div><div class="panel"><h2>Historial de compras post implementacion - 01/05/2026</h2>${periodButtons(purchasePeriod, "setPurchasePeriod")}<p class="hint">Periodo activo: ${periodLabel(purchasePeriod)}. Este historial contiene las compras registradas desde que se implementa la app.</p><div class="report-actions"><button type="button" onclick="downloadPurchasesReport()">Descargar reporte</button></div><div class="metrics"><div class="metric"><span>Compras registradas</span><strong>${num(filteredPurchases.length)}</strong></div><div class="metric"><span>Total pagado</span><strong>${money(totalPaid)}</strong></div><div class="metric"><span>Lotes con vencimiento</span><strong>${num(lotsWithExpiry)}</strong></div></div>${rows}</div>${previousHistoryPanel}</section>`);
+    }
+    function sales() {
+      const item = editingSaleId ? byId(state.sales, editingSaleId) : {};
+      const productOptions = state.products.map(p => `<option value="${p.id}" ${p.id === item.productId ? "selected" : ""}>${p.code} - ${p.name}</option>`).join("");
+      const filteredSales = salesByDateFilter().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const performance = productPerformanceRows(filteredSales);
+      const totalSold = performance.reduce((total, row) => total + row.sold, 0);
+      const totalRevenue = performance.reduce((total, row) => total + row.revenue, 0);
+      const totalMargin = performance.reduce((total, row) => total + row.totalMargin, 0);
+      const summaryRows = performance.filter(row => row.sold > 0);
+      const summary = summaryRows.length ? `<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Unidades vendidas</th><th>Facturacion</th><th>Margen estimado</th></tr></thead><tbody>${summaryRows.map(row => `<tr><td>${row.product.name}</td><td><strong>${num(row.sold)}</strong></td><td>${money(row.revenue)}</td><td>${money(row.totalMargin)}</td></tr>`).join("")}</tbody></table></div>` : "No hay ventas para el filtro seleccionado.";
+      const rows = filteredSales.length ? `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th></th></tr></thead><tbody>${filteredSales.map(s => `<tr><td>${s.date}</td><td>${byId(state.products, s.productId).name}</td><td>${num(s.quantity)}</td><td><button class="text" onclick="editSale('${s.id}')">Editar</button><button class="text danger" onclick="deleteSale('${s.id}')">Eliminar</button></td></tr>`).join("")}</tbody></table></div>` : "No hay ventas para el filtro seleccionado.";
+      const filter = `<div class="grid">${periodButtons(salesPeriod, "setSalesPeriod")}<form class="form" onsubmit="setSalesFilter(event)"><div class="actions"><label><span>Desde</span><input name="startDate" type="date" value="${salesFilterStart}"></label><label><span>Hasta</span><input name="endDate" type="date" value="${salesFilterEnd}"></label></div><div class="actions"><button>Aplicar filtro manual</button><button class="secondary" type="button" onclick="clearSalesFilter()">Limpiar</button><button type="button" onclick="downloadSalesReport()">Descargar reporte</button></div></form></div>`;
+      layout(`<section class="grid"><div class="split"><div class="panel"><h2>${editingSaleId ? "Editar venta" : "Registrar venta"}</h2><form class="form" onsubmit="addSale(event)"><label><span>Fecha</span><input name="date" type="date" value="${item.date || new Date().toISOString().slice(0,10)}"></label><label><span>Producto</span><select name="productId">${productOptions}</select></label><label><span>Cantidad</span><input name="quantity" type="text" inputmode="decimal" value="${formNumber(item.quantity ?? 1)}" required></label><div class="actions"><button>${editingSaleId ? "Guardar cambios" : "Registrar venta"}</button>${editingSaleId ? `<button class="secondary" type="button" onclick="cancelSaleEdit()">Cancelar</button>` : ""}</div></form></div><div class="panel"><h2>Conteo de productos vendidos</h2><p class="hint">Periodo activo: ${salesFilterLabel()}.</p><div class="metrics"><div class="metric"><span>Unidades vendidas</span><strong>${num(totalSold)}</strong></div><div class="metric"><span>Facturacion</span><strong>${money(totalRevenue)}</strong></div><div class="metric"><span>Margen estimado</span><strong>${money(totalMargin)}</strong></div></div>${summary}</div></div><div class="panel"><h2>Historial</h2>${filter}<p class="hint">El filtro modifica tanto el historial como el conteo de productos vendidos.</p>${rows}</div></section>`);
+    }
+    function events() {
+      const categoryOptions = ["feriado", "fecha patria", "deportivo", "temporada", "otro"].map(category => `<option>${category}</option>`).join("");
+      const impactOptions = ["alto", "medio", "bajo"].map(impact => `<option>${impact}</option>`).join("");
+      const rows = state.events.length ? `<div class="table-wrap"><table><thead><tr><th>Evento</th><th>Tipo</th><th>Fecha</th><th>Anticipacion</th><th>Impacto</th><th>Estado</th><th></th></tr></thead><tbody>${state.events.map(event => { const days = eventDaysUntil(event.date); const active = days >= 0 && days <= Number(event.noticeDays || 30); return `<tr><td>${event.name}</td><td>${event.category}</td><td>${event.date}</td><td>${event.noticeDays} dia(s)</td><td>${impactLabel(event.impact)}</td><td><span class="status ${active ? event.impact === "alto" ? "danger" : "warn" : "ok"}">${days < 0 ? "Pasado" : active ? `Avisar ahora (${days} dia(s))` : `Faltan ${days} dia(s)`}</span></td><td><button class="text danger" onclick="removeItem('events','${event.id}')">Eliminar</button></td></tr>`; }).join("")}</tbody></table></div>` : "Todavia no hay eventos cargados.";
+      layout(`<section class="split"><div class="panel"><h2>Agregar evento importante</h2><form class="form" onsubmit="addEvent(event)"><label><span>Nombre del evento</span><input name="name" placeholder="Ej: final de futbol, feriado, fecha patria" required></label><label><span>Tipo</span><select name="category">${categoryOptions}</select></label><label><span>Fecha</span><input name="date" type="date" required></label><label><span>Anticipacion del aviso</span><input name="noticeDays" type="text" inputmode="decimal" value="30" required></label><label><span>Impacto esperado en ventas</span><select name="impact">${impactOptions}</select></label><p class="hint">La IA avisa cuando el evento entra dentro de la anticipacion configurada. Ejemplo: si cargas 30 dias, avisa desde un mes antes.</p><div class="actions"><button>Agregar evento</button></div></form></div><div class="panel"><h2>Eventos cargados</h2>${rows}</div></section>`);
+    }
+    function ai() {
+      const prediction = predictionSummary();
+      const predictionRows = prediction.rows;
+      const eventRecs = upcomingEvents().flatMap(event => {
+        const suggestions = eventStockSuggestions(event);
+        const base = [`Evento cercano: ${event.name} (${event.category}) en ${event.days} dia(s). Preparar stock por impacto ${impactLabel(event.impact)}.`];
+        return suggestions.length ? [...base, ...suggestions.map(row => `Para ${event.name}, revisar ${ingredientTitle(row.ingredient)}. Productos relacionados: ${row.products.join(", ")}.`)] : base;
+      });
+      const predictionRecs = predictionRows.slice(0, 3).map(row => `Prediccion de ventas: ${row.product.name} podria vender ${num(row.predictedTomorrow)} unidad(es) manana. Tendencia ${row.trend}, promedio diario ${num(row.dailyAverage)} y ajuste por ${row.eventBoost.reason}.`);
+      const recs = [...predictionRecs, ...eventRecs, ...stockBreakRows().map(row => `${row.status.label === "Quiebre" ? "Quiebre de stock" : "Riesgo de quiebre"} en ${ingredientTitle(row.ingredient)}: faltan ${num(row.missingToMin)} ${row.ingredient.unit} para llegar al minimo.`), ...low().map(i => `Comprar ${ingredientTitle(i)}: el stock esta por debajo del minimo.`), ...expiring().map(lot => `Usar ${ingredientTitle(lot.ingredient)} antes del vencimiento.`), ...wasteRows().map(row => `${row.days < 0 ? "Registrar desperdicio" : "Priorizar uso"} de ${ingredientTitle(row.ingredient)}: ${num(wasteQuantity(row))} ${row.ingredient.unit} en riesgo o perdida.`)];
+      layout(`<section class="grid"><div class="metrics"><div class="metric"><span>Venta prevista manana</span><strong>${num(prediction.totalTomorrow)}</strong></div><div class="metric"><span>Facturacion prevista</span><strong>${money(prediction.revenueTomorrow)}</strong></div><div class="metric"><span>Margen previsto</span><strong>${money(prediction.marginTomorrow)}</strong></div><div class="metric"><span>Producto lider</span><strong>${prediction.leader ? prediction.leader.product.name : "Sin datos"}</strong></div></div><div class="panel"><h2>Prediccion IA de ventas</h2><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Ventas historicas</th><th>Promedio diario</th><th>Tendencia</th><th>Evento / ajuste</th><th>Prediccion manana</th><th>Prediccion 7 dias</th><th>Margen previsto manana</th></tr></thead><tbody>${predictionRows.map(row => `<tr><td>${row.product.name}</td><td>${num(row.sold)}</td><td>${num(row.dailyAverage)}</td><td><span class="status ${row.trend === "sube" ? "ok" : row.trend === "baja" ? "warn" : ""}">${row.trend}</span></td><td>${row.eventBoost.reason}<br>Factor ${num(row.eventBoost.factor)}</td><td><strong>${num(row.predictedTomorrow)}</strong></td><td>${num(row.predictedWeek)}</td><td>${money(row.marginTomorrow)}</td></tr>`).join("")}</tbody></table></div><p class="hint">La prediccion toma el historial de ventas, compara los ultimos dias contra los anteriores y ajusta la demanda si hay eventos cercanos de impacto. Es una IA simulada para ejercitar la logica de la demo.</p></div><div class="panel"><h2>Recomendaciones IA</h2>${recs.map(r => `<div class="rec"><strong>IA</strong><span>${r}</span></div>`).join("")}</div></section>`);
+    }
+    function history(rows, columns, type) {
+      if (!rows.length) return "Todavia no hay registros.";
+      return `<div class="table-wrap"><table><tbody>${rows.map(r => `<tr>${columns.map(c => `<td>${c === "ingredientId" ? byId(state.ingredients, r[c]).name : c === "productId" ? byId(state.products, r[c]).name : c === "totalPrice" ? money(r[c]) : num(r[c]) || r[c]}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+    }
+    window.addIngredient = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const ingredient = { ...f, stock: parseNumber(f.stock), minStock: parseNumber(f.minStock), costUnit: parseNumber(f.costUnit), isCritical: f.isCritical === "true" || perishableGroups.includes(f.foodGroup), supplierId: "" }; if (editingIngredientId) { state.ingredients = state.ingredients.map(i => i.id === editingIngredientId ? { ...i, ...ingredient, id: editingIngredientId } : i); editingIngredientId = ""; } else { state.ingredients.unshift({ ...ingredient, id: id("ing") }); } save(); render(); };
+    window.editIngredient = ingredientId => { editingIngredientId = ingredientId; render(); };
+    window.cancelIngredientEdit = () => { editingIngredientId = ""; render(); };
+    window.addProduct = e => { e.preventDefault(); const formData = new FormData(e.target); const f = Object.fromEntries(formData); const recipe = state.ingredients.map(ingredient => ({ ingredientId: ingredient.id, quantity: parseNumber(formData.get(`recipe-${ingredient.id}`)) })).filter(item => item.quantity > 0); const product = { code: f.code, name: f.name, price: parseNumber(f.price), category: f.category, recipe }; if (editingProductId) { state.products = state.products.map(p => p.id === editingProductId ? { ...p, ...product, id: editingProductId } : p); editingProductId = ""; } else { state.products.unshift({ ...product, id: id("prod") }); } save(); render(); };
+    window.editProduct = productId => { editingProductId = productId; render(); };
+    window.cancelProductEdit = () => { editingProductId = ""; render(); };
+    window.deleteProduct = productId => { state.sales.filter(s => s.productId === productId).forEach(sale => moveSaleStock(sale, 1)); state.products = state.products.filter(p => p.id !== productId); state.sales = state.sales.filter(s => s.productId !== productId); editingProductId = ""; editingSaleId = ""; save(); render(); };
+    window.addSupplier = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const supplier = { ...f, referencePrice: parseNumber(f.referencePrice) }; if (editingSupplierId) { state.suppliers = state.suppliers.map(s => s.id === editingSupplierId ? { ...s, ...supplier, id: editingSupplierId } : s); editingSupplierId = ""; } else { state.suppliers.unshift({ ...supplier, id: id("sup") }); } save(); render(); };
+    window.editSupplier = supplierId => { editingSupplierId = supplierId; render(); };
+    window.cancelSupplierEdit = () => { editingSupplierId = ""; render(); };
+    window.deleteSupplier = supplierId => { state.suppliers = state.suppliers.filter(s => s.id !== supplierId); state.ingredients = state.ingredients.map(i => i.supplierId === supplierId ? { ...i, supplierId: "" } : i); editingSupplierId = ""; save(); render(); };
+    const syncPostPurchaseHistory = purchase => {
+      const rows = (state.postImplementationPurchases || []).filter(row => row.id !== purchase.id);
+      state.postImplementationPurchases = purchase.date >= implementationDate ? [purchase, ...rows] : rows;
+    };
+    const syncPostSaleHistory = sale => {
+      const rows = (state.postImplementationSales || []).filter(row => row.id !== sale.id);
+      state.postImplementationSales = sale.date >= implementationDate ? [sale, ...rows] : rows;
+    };
+    window.addPurchase = e => {
+      e.preventDefault();
+      const f = Object.fromEntries(new FormData(e.target));
+      const purchase = { ...f, quantity: parseNumber(f.quantity), totalPrice: parseNumber(f.totalPrice), isUrgent: f.isUrgent === "true", urgentReason: String(f.urgentReason || "").trim() };
+      const selected = byId(state.ingredients, purchase.ingredientId);
+      if (!purchase.expiryDate) purchase.expiryDate = suggestedPurchaseExpiry(selected, purchase.date);
+      if (!purchase.isUrgent) purchase.urgentReason = "";
+      const purchaseId = editingPurchaseId || id("pur");
+      const savedPurchase = purchaseWithExpiry({ ...purchase, id: purchaseId });
+      if (editingPurchaseId) {
+        const old = byId(state.purchases, editingPurchaseId);
+        const oldIng = byId(state.ingredients, old.ingredientId);
+        oldIng.stock = Number(oldIng.stock) - Number(old.quantity);
+        const newIng = byId(state.ingredients, savedPurchase.ingredientId);
+        newIng.stock = Number(newIng.stock) + Number(savedPurchase.quantity);
+        if (Number(savedPurchase.quantity) > 0) newIng.costUnit = Number(savedPurchase.totalPrice) / Number(savedPurchase.quantity);
+        state.purchases = state.purchases.map(p => p.id === editingPurchaseId ? savedPurchase : p);
+        editingPurchaseId = "";
+      } else {
+        const ing = byId(state.ingredients, savedPurchase.ingredientId);
+        ing.stock = Number(ing.stock) + Number(savedPurchase.quantity);
+        if (Number(savedPurchase.quantity) > 0) ing.costUnit = Number(savedPurchase.totalPrice) / Number(savedPurchase.quantity);
+        state.purchases.unshift(savedPurchase);
+      }
+      syncPostPurchaseHistory(savedPurchase);
+      state.warning = "";
+      save();
+      render();
+    };
+    window.editPurchase = purchaseId => {
+      const purchase = byId(state.purchases, purchaseId);
+      if (!purchase.id) {
+        const postPurchase = byId(state.postImplementationPurchases || [], purchaseId);
+        if (postPurchase.id) state.purchases.unshift(postPurchase);
+      }
+      editingPurchaseId = purchaseId;
+      render();
+    };
+    window.selectPurchaseIngredient = ingredientId => { selectedPurchaseIngredientId = ingredientId; render(); };
+    window.cancelPurchaseEdit = () => { editingPurchaseId = ""; render(); };
+    window.deletePurchase = purchaseId => { const purchase = byId(state.purchases, purchaseId); const ing = byId(state.ingredients, purchase.ingredientId); ing.stock = Number(ing.stock) - Number(purchase.quantity); state.purchases = state.purchases.filter(p => p.id !== purchaseId); state.postImplementationPurchases = (state.postImplementationPurchases || []).filter(p => p.id !== purchaseId); editingPurchaseId = ""; save(); render(); };
+    window.addSale = e => {
+      e.preventDefault();
+      const f = Object.fromEntries(new FormData(e.target));
+      const sale = { ...f, quantity: parseNumber(f.quantity) };
+      let old = null;
+      if (editingSaleId) {
+        old = byId(state.sales, editingSaleId);
+        moveSaleStock(old, 1);
+      }
+      const warning = checkSale(sale.productId, sale.quantity);
+      if (warning) {
+        if (old) moveSaleStock(old, -1);
+        state.warning = warning;
+        save();
+        render();
+        return;
+      }
+      moveSaleStock(sale, -1);
+      const saleId = editingSaleId || id("sale");
+      const savedSale = { ...sale, id: saleId };
+      if (editingSaleId) {
+        state.sales = state.sales.map(s => s.id === editingSaleId ? savedSale : s);
+        editingSaleId = "";
+      } else {
+        state.sales.unshift(savedSale);
+      }
+      syncPostSaleHistory(savedSale);
+      state.warning = "";
+      save();
+      render();
+    };
+    window.editSale = saleId => { editingSaleId = saleId; render(); };
+    window.cancelSaleEdit = () => { editingSaleId = ""; render(); };
+    window.deleteSale = saleId => { const sale = byId(state.sales, saleId); moveSaleStock(sale, 1); state.sales = state.sales.filter(s => s.id !== saleId); state.postImplementationSales = (state.postImplementationSales || []).filter(s => s.id !== saleId); editingSaleId = ""; save(); render(); };
+    window.addEvent = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const event = { ...f, noticeDays: parseNumber(f.noticeDays || 30), id: id("evt") }; state.events.unshift(event); save(); render(); };
+    window.removeItem = (collection, itemId) => { state[collection] = state[collection].filter(x => x.id !== itemId); save(); render(); };
+    window.saveObjectives = e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); state.objectiveBaseline = { stockBreaks: parseNumber(f.stockBreaks), wasteQuantity: parseNumber(f.wasteQuantity), urgentPurchases: parseNumber(f.urgentPurchases) }; state.objectiveBaselineUsesLotWaste = true; save(); objectives(); };
+    function render() {
+      if (tab === "dashboard") dashboard();
+      if (tab === "objectives") objectives();
+      if (tab === "owner") ownerDashboard();
+      if (tab === "ingredients") ingredients();
+      if (tab === "products") products();
+      if (tab === "suppliers") suppliers();
+      if (tab === "purchases") purchases();
+      if (tab === "sales") sales();
+      if (tab === "events") events();
+      if (tab === "ai") ai();
+    }
+    render();
+  </script>
+</body>
+</html>
