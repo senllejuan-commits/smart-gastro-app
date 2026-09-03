@@ -997,9 +997,30 @@
     let speechQueue = [];
     let activeUtterance = null;
     const extractBotText = message => {
-      const payload = message && (message.payload || message.data || {});
-      const candidates = [message && message.text, payload.text, payload.body, payload.message, payload.title];
-      return candidates.find(value => typeof value === "string" && value.trim()) || "";
+      const root = message && message.message && typeof message.message === "object" ? message.message : message;
+      const preferredKeys = ["text", "body", "content", "markdown", "message", "title"];
+      const seen = new WeakSet();
+      const visit = value => {
+        if (!value) return "";
+        if (typeof value === "string") return value.trim();
+        if (typeof value !== "object" || seen.has(value)) return "";
+        seen.add(value);
+        for (const key of preferredKeys) {
+          if (typeof value[key] === "string" && value[key].trim()) return value[key].trim();
+        }
+        for (const key of ["payload", "data", "message", "block", "blocks", "items"]) {
+          const child = value[key];
+          if (Array.isArray(child)) {
+            const texts = child.map(visit).filter(Boolean);
+            if (texts.length) return texts.join(". ");
+          } else {
+            const text = visit(child);
+            if (text) return text;
+          }
+        }
+        return "";
+      };
+      return visit(root);
     };
     function preferredSpanishVoice() {
       const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
@@ -1081,7 +1102,8 @@
       mvpAssistantInitialized = true;
       window.botpress.on("webchat:initialized", () => window.botpress.open());
       window.botpress.on("message", message => {
-        if (message && message.direction && message.direction !== "outgoing") return;
+        const direction = message && (message.direction || (message.message && message.message.direction));
+        if (direction && direction !== "outgoing") return;
         const text = extractBotText(message);
         if (!text) return;
         lastBotResponse = text;
