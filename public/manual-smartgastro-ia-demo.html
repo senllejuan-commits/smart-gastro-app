@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manual SmartGastro IA Demo</title>
+  <style>
+    :root { color: #102b3a; background: #f4fbfb; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin: 0; background: radial-gradient(circle at 14% 8%, rgba(88, 201, 155, .18), transparent 28%), radial-gradient(circle at 86% 4%, rgba(12, 95, 131, .13), transparent 28%), #f4fbfb; }
+    main { max-width: 980px; margin: 0 auto; padding: 32px 18px 48px; }
+    article { background: rgba(255,255,255,.94); border: 1px solid #cfe2df; border-radius: 8px; box-shadow: 0 18px 42px rgba(7, 68, 93, .12); padding: 28px; }
+    h1 { color: #06384f; font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 0 0 8px; }
+    .eyebrow { color: #16a6a3; font-weight: 900; letter-spacing: .02em; margin: 0 0 18px; text-transform: uppercase; }
+    pre { color: #102b3a; font: inherit; line-height: 1.55; margin: 0; white-space: pre-wrap; }
+    a { color: #0c5f83; font-weight: 800; }
+    .actions { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .button { background: linear-gradient(135deg, #0c5f83, #16a6a3); border-radius: 8px; color: white; display: inline-block; font-weight: 900; padding: 10px 14px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <p class="eyebrow">SmartGastro IA Demo</p>
+      <h1>Manual de instrucciones</h1>
+      <div class="actions"><a class="button" href="smart-gastro-ia-demo.html">Abrir demo</a><a class="button" href="manual-instrucciones-smartgastro-ia-demo.txt">Descargar TXT</a></div>
+      <pre>MANUAL DE INSTRUCCIONES - SMARTGASTRO IA DEMO
+
+Link de la demo:
+https://smart-gastro-app.vercel.app/smart-gastro-ia-demo.html
+
+Descripcion general
+SmartGastro IA Demo es una aplicacion web de gestion gastronomica pensada para cargar informacion operativa del local y transformarla en indicadores utiles para la toma de decisiones.
+
+La app permite registrar ingredientes, productos, compras, ventas, proveedores y eventos importantes. A partir de esos datos calcula stock, costos, margenes, vencimientos, desperdicio, compras urgentes, quiebres de stock y predicciones de ventas.
+
+Importante: esta demo guarda los datos en el navegador de la computadora donde se usa. Si se abre en otra computadora o celular, puede empezar vacia. Para una version real multiusuario se deberia conectar a una base de datos.
+
+
+1. ORDEN RECOMENDADO PARA USAR LA APP
+
+Para que la aplicacion funcione correctamente, conviene cargar la informacion en este orden:
+
+1. Ingredientes
+2. Productos
+3. Compras
+4. Ventas
+5. Proveedores
+6. Eventos
+7. Revisar Dashboard, Objetivos, Panel Ejecutivo y Recomendaciones IA
+
+Este orden es importante porque los productos se arman con ingredientes, las compras actualizan el stock de ingredientes y las ventas descuentan stock segun la receta del producto vendido.
+
+
+2. PANEL EJECUTIVO
+
+El Panel Ejecutivo resume la situacion general del negocio.
+
+Sirve para que una persona con rol directivo pueda ver rapidamente:
+- Facturacion del periodo seleccionado.
+- Margen estimado del periodo.
+- Unidades vendidas.
+- Margen promedio.
+- Precio promedio vendido.
+- Alertas actuales.
+- Productos mas vendidos.
+- Facturacion por producto.
+- Margen generado por producto.
+- Estado general del negocio.
+- Alertas de stock, desperdicio y eventos.
+
+Filtros disponibles:
+- Hoy
+- 7 dias
+- 30 dias
+- 90 dias
+- Todo
+
+Boton "Descargar reporte":
+Permite bajar un archivo con los datos principales del Panel Ejecutivo para compartir o analizar fuera de la app.
+
+
+3. DASHBOARD
+
+El Dashboard concentra el analisis operativo de la aplicacion.
+
+Tiene varias vistas internas:
+
+Resumen:
+Muestra alertas activas y una lectura rapida de ventas previstas, facturacion prevista, margen previsto y eventos cercanos.
+
+Ventas y prediccion:
+Muestra la prediccion de ventas por producto. La app toma las ventas historicas, calcula promedios, detecta tendencia y ajusta la demanda si hay eventos cercanos.
+
+Stock y compras:
+Muestra quiebres o riesgos de stock. Tambien muestra compras sugeridas segun la prediccion de ventas, las recetas cargadas, el stock actual y el stock minimo.
+
+Vencimientos y desperdicio:
+Analiza los lotes comprados y sus fechas de vencimiento. La app estima si una materia prima podria perderse por vencimiento, usando el consumo generado por las ventas.
+
+Eventos:
+Muestra eventos proximos que pueden afectar las ventas y sugiere preparar stock.
+
+
+4. OBJETIVOS
+
+La seccion Objetivos sirve para medir si la aplicacion ayuda a mejorar la gestion.
+
+Objetivos principales:
+- Disminuir quiebres de stock.
+- Reducir desperdicio de insumos perecederos.
+- Reducir compras imprevistas y urgentes.
+
+Como se interpreta:
+- Verde: la meta esta alcanzada.
+- Amarillo: todavia falta mejorar.
+
+Linea base editable:
+Permite cargar la situacion previa a la implementacion. Por ejemplo, cuantos quiebres de stock habia antes, cuanto desperdicio habia y cuantas compras urgentes se realizaban.
+
+Medicion actual:
+La app compara la linea base contra los datos actuales registrados.
+
+Ventas previas y prediccion usada:
+Sirve para justificar de donde sale la planificacion de compras. Si hay ventas historicas, la app usa ese patron para estimar demanda futura.
+
+
+5. VENTAS
+
+En Ventas se registran las ventas realizadas.
+
+Campos principales:
+- Fecha
+- Producto
+- Cantidad vendida
+
+Que hace la app cuando se registra una venta:
+- Suma unidades vendidas.
+- Calcula facturacion.
+- Calcula margen estimado.
+- Descuenta stock de los ingredientes usados en la receta.
+- Alimenta el historial para predicciones futuras.
+
+Conteo de productos vendidos:
+Muestra cuantas unidades se vendieron por producto dentro del periodo seleccionado.
+
+Historial:
+Permite ver las ventas registradas y editarlas o eliminarlas.
+
+Filtro de fechas:
+Permite analizar ventas por periodos especificos.
+
+Boton "Descargar reporte":
+Permite exportar el reporte de ventas.
+
+
+6. PRODUCTOS
+
+En Productos se cargan los productos que vende el local.
+
+Campos principales:
+- Codigo
+- Nombre
+- Precio de venta
+- Categoria
+- Receta del producto
+
+Receta del producto:
+La receta indica que ingredientes se usan para fabricar una unidad del producto.
+
+Ejemplo:
+Producto: Hamburguesa clasica
+Receta:
+- Pan de hamburguesa: 1 unidad
+- Carne: 150 gr
+- Queso: 1 unidad
+- Tomate: 30 gr
+- Lechuga: 20 gr
+
+Con esta informacion, la app calcula:
+- Costo de confeccion.
+- Precio de venta.
+- Margen en pesos.
+- Margen sobre venta.
+- Rentabilidad sobre costo.
+
+Diferencia entre margen y rentabilidad:
+Margen sobre venta: mide cuanto queda de ganancia sobre el precio de venta.
+Rentabilidad sobre costo: mide cuanto se gana en relacion al costo del producto.
+
+Tambien permite editar o eliminar productos.
+
+
+7. COMPRAS
+
+En Compras se registran las compras de ingredientes.
+
+Campos principales:
+- Fecha
+- Ingrediente
+- Cantidad comprada
+- Precio total pagado
+- Vencimiento de paquete o lote
+- Tipo de compra
+- Motivo si fue urgente
+
+Importante sobre las unidades:
+La compra debe respetar la unidad definida en Ingredientes.
+
+Ejemplo:
+Si Carne esta definida en gramos y se compran 10 kg, se debe cargar 10000 gr.
+
+Precio total pagado:
+No se carga el precio unitario directamente. Se carga el total pagado, y la app calcula el costo unitario dividiendo:
+
+Precio total pagado / cantidad comprada
+
+Compras urgentes:
+Si una compra fue de emergencia, se puede marcar como urgente y explicar el motivo. Esto permite medir el impacto de compras imprevistas en el negocio.
+
+Recomendaciones de compra futura:
+La app sugiere que ingredientes comprar segun:
+- Ventas previstas.
+- Recetas de productos.
+- Stock actual.
+- Stock minimo.
+- Eventos proximos.
+
+Historial post implementacion:
+Muestra las compras registradas desde la implementacion de la app.
+
+Historial previo:
+Puede usarse como referencia para comparar contra la situacion anterior.
+
+Boton "Descargar reporte":
+Permite exportar las compras.
+
+
+8. INGREDIENTES
+
+En Ingredientes se cargan todos los insumos que utiliza el local.
+
+Campos principales:
+- Codigo
+- Nombre
+- Familia de alimento
+- Tipo de alimento
+- Unidad de stock
+- Stock actual
+- Stock minimo
+- Costo por unidad de stock
+- Vencimiento base o stock inicial
+
+Familias de alimento:
+La app contempla grupos como lacteos, verduras, panificados, proteinas y no perecederos.
+
+Alimentos criticos:
+Los alimentos perecederos se consideran criticos porque pueden vencer o generar desperdicio.
+
+Ejemplos de criticos:
+- Lacteos
+- Verduras
+- Panificados
+- Proteinas
+
+Alimentos no criticos:
+Son insumos con menor riesgo de vencimiento inmediato, como cafe u otros productos secos.
+
+Stock minimo:
+Es el nivel minimo deseado. Si el stock cae por debajo, la app puede generar alerta o recomendacion de compra.
+
+Costo por unidad:
+Debe coincidir con la unidad de stock.
+
+Ejemplo:
+Si Carne se mide en gramos y el kilo cuesta $10.000, el costo por unidad debe ser $10 por gr.
+
+
+9. PROVEEDORES
+
+En Proveedores se registra informacion de los proveedores.
+
+Campos principales:
+- Nombre
+- Rubro
+- Telefono
+- Email
+- Precio de referencia
+
+Sirve para tener centralizada la informacion comercial y comparar precios de compra.
+
+Tambien permite editar o eliminar proveedores.
+
+
+10. EVENTOS
+
+En Eventos se cargan fechas importantes que pueden afectar la demanda.
+
+Campos principales:
+- Nombre del evento
+- Tipo
+- Fecha
+- Anticipacion del aviso
+- Impacto esperado en ventas
+
+Ejemplos:
+- Feriados
+- Fechas patrias
+- Partidos importantes
+- Eventos deportivos
+- Temporadas especiales
+
+Anticipacion:
+Define cuantos dias antes la app debe avisar.
+
+Ejemplo:
+Si se carga anticipacion de 30 dias, la app empieza a mostrar el aviso desde un mes antes del evento.
+
+Impacto:
+Puede ser alto, medio o bajo. Esto ayuda a la app a ajustar la prediccion y recomendar preparacion de stock.
+
+
+11. RECOMENDACIONES IA
+
+La seccion Recomendaciones IA resume las sugerencias inteligentes de la app.
+
+Puede mostrar:
+- Prediccion de ventas por producto.
+- Producto con mayor demanda esperada.
+- Facturacion prevista.
+- Margen previsto.
+- Alertas de stock.
+- Riesgo de quiebre.
+- Riesgo de desperdicio.
+- Eventos cercanos que pueden aumentar ventas.
+- Ingredientes que conviene comprar.
+
+La IA de esta demo es simulada:
+No se conecta a un modelo externo en tiempo real. Usa reglas de negocio, ventas historicas, recetas, stock y eventos para generar predicciones y recomendaciones.
+
+
+12. VENCIMIENTOS Y SISTEMA PEPS
+
+La app trabaja con la logica PEPS:
+Primero Entra, Primero Sale.
+
+Esto significa que, para evitar desperdicio, se supone que primero se utiliza la mercaderia mas antigua o con vencimiento mas cercano.
+
+Vencimiento por lote:
+Cada compra puede tener su propia fecha de vencimiento. Esto permite diferenciar compras del mismo ingrediente realizadas en dias distintos.
+
+Ejemplo:
+Compra 1:
+- Tomate
+- 5 kg
+- Vence el 10/09
+
+Compra 2:
+- Tomate
+- 5 kg
+- Vence el 17/09
+
+La app analiza cada lote por separado y estima si el saldo podria llegar al vencimiento sin venderse.
+
+
+13. DESPERDICIO
+
+El desperdicio se calcula tomando en cuenta:
+- Ingredientes perecederos.
+- Compras con vencimiento.
+- Consumo generado por ventas.
+- Saldo estimado de cada lote al momento de vencer.
+
+Si una compra vence y todavia queda saldo estimado, la app lo interpreta como desperdicio o riesgo de desperdicio.
+
+Esto ayuda a reducir compras excesivas y mejorar la planificacion.
+
+
+14. QUIEBRES DE STOCK
+
+Un quiebre de stock ocurre cuando no hay suficiente ingrediente para sostener la venta de productos.
+
+La app detecta:
+- Stock por debajo del minimo.
+- Ingredientes sin cantidad suficiente.
+- Productos afectados por falta de insumos.
+
+Esto permite anticipar compras y evitar perder ventas.
+
+
+15. REPORTES
+
+La app permite descargar reportes en distintas secciones:
+- Panel Ejecutivo
+- Compras
+- Ventas
+
+Los reportes sirven para:
+- Compartir resultados.
+- Presentar informacion a terceros.
+- Analizar datos fuera de la app.
+- Justificar decisiones de gestion.
+
+
+16. BOTON "LIMPIAR DATOS"
+
+El boton "Limpiar datos" borra la informacion cargada en esa demo y vuelve la app a estado inicial.
+
+Importante:
+Solo limpia la version que se esta usando. No borra las otras versiones ni afecta la app original.
+
+
+17. LIMITACIONES DE LA DEMO
+
+Esta version es una demo funcional, no una version final de mercado.
+
+Limitaciones principales:
+- Los datos se guardan en el navegador.
+- No hay usuarios con permisos reales.
+- No hay base de datos compartida.
+- La IA es simulada con reglas internas.
+- No esta conectada a un sistema real de comandas.
+
+Para una version comercial se podria agregar:
+- Usuarios con roles.
+- Base de datos Supabase.
+- Integracion con sistemas de comanda mediante API.
+- Panel multi-sucursal.
+- Login.
+- Reportes avanzados.
+- IA conectada a modelos externos.
+
+
+18. EXPLICACION CORTA PARA PRESENTAR LA DEMO
+
+SmartGastro IA es una demo de gestion gastronomica que permite cargar ingredientes, productos, compras y ventas. Con esos datos calcula costos, margenes, stock, vencimientos y desperdicio. Ademas, genera recomendaciones para anticipar compras, evitar quiebres de stock y planificar mejor la operacion del restaurante.
+
+La propuesta de valor principal es que no solo registra informacion, sino que la transforma en alertas y predicciones para tomar mejores decisiones.
+
+</pre>
+    </article>
+  </main>
+</body>
+</html>
