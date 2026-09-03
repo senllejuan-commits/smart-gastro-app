@@ -994,6 +994,8 @@
     let mvpAssistantInitialized = false;
     let voiceEnabled = false;
     let lastBotResponse = "";
+    let speechQueue = [];
+    let activeUtterance = null;
     const extractBotText = message => {
       const payload = message && (message.payload || message.data || {});
       const candidates = [message && message.text, payload.text, payload.body, payload.message, payload.title];
@@ -1003,16 +1005,51 @@
       const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
       return voices.find(voice => /^es-AR$/i.test(voice.lang)) || voices.find(voice => /^es(-|_)/i.test(voice.lang)) || null;
     }
-    function speakMvpText(text) {
-      if (!text || !window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text.replace(/[*#_`]/g, " "));
-      utterance.lang = "es-AR";
-      utterance.rate = 0.96;
-      utterance.pitch = 1;
+    function setVoiceMessage(text, tone = "") {
+      const status = document.getElementById("voice-status");
+      if (!status) return;
+      status.textContent = text;
+      status.classList.toggle("active", tone === "active");
+    }
+    function speechChunks(text) {
+      const clean = text.replace(/[*#_`]/g, " ").replace(/\s+/g, " ").trim();
+      const sentences = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
+      const chunks = [];
+      sentences.forEach(sentence => {
+        if (chunks.length && chunks.at(-1).length + sentence.length < 190) chunks[chunks.length - 1] = `${chunks.at(-1)} ${sentence}`.trim();
+        else chunks.push(sentence.trim());
+      });
+      return chunks.filter(Boolean);
+    }
+    function speakNextChunk() {
+      if (!voiceEnabled || !speechQueue.length) {
+        activeUtterance = null;
+        if (voiceEnabled) setVoiceMessage("Voz activada: lista para leer la próxima respuesta.", "active");
+        return;
+      }
+      activeUtterance = new SpeechSynthesisUtterance(speechQueue.shift());
+      activeUtterance.lang = "es-AR";
+      activeUtterance.rate = 0.94;
+      activeUtterance.pitch = 1;
       const voice = preferredSpanishVoice();
-      if (voice) utterance.voice = voice;
-      window.speechSynthesis.speak(utterance);
+      if (voice) activeUtterance.voice = voice;
+      activeUtterance.onstart = () => setVoiceMessage("🔊 Reproduciendo la respuesta…", "active");
+      activeUtterance.onend = speakNextChunk;
+      activeUtterance.onerror = event => {
+        activeUtterance = null;
+        speechQueue = [];
+        setVoiceMessage(`No se pudo reproducir la voz (${event.error || "error del navegador"}).`);
+      };
+      window.speechSynthesis.speak(activeUtterance);
+    }
+    function speakMvpText(text) {
+      if (!text || !("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+        setVoiceMessage("Este navegador no ofrece lectura en voz alta.");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      speechQueue = speechChunks(text);
+      window.setTimeout(speakNextChunk, 120);
     }
     function updateVoiceStatus() {
       const status = document.getElementById("voice-status");
@@ -1029,11 +1066,16 @@
       if (!voiceEnabled) window.speechSynthesis.cancel();
       updateVoiceStatus();
       if (voiceEnabled) {
-        speakMvpText(lastBotResponse || "Voz activada. Ya podés hacer tu pregunta.");
+        speakMvpText("Voz activada. Ya podés hacer tu pregunta.");
       }
     };
+    window.testMvpVoice = () => {
+      if (!voiceEnabled) voiceEnabled = true;
+      updateVoiceStatus();
+      speakMvpText("Prueba de sonido de Entrenador MVP. La voz funciona correctamente.");
+    };
     window.repeatMvpResponse = () => lastBotResponse ? speakMvpText(lastBotResponse) : alert("Todavía no hay una respuesta del bot para reproducir.");
-    window.stopMvpVoice = () => window.speechSynthesis && window.speechSynthesis.cancel();
+    window.stopMvpVoice = () => { speechQueue = []; activeUtterance = null; if (window.speechSynthesis) window.speechSynthesis.cancel(); setVoiceMessage(voiceEnabled ? "Voz activada: reproducción detenida." : "Voz desactivada.", voiceEnabled ? "active" : ""); };
     function initMvpAssistant() {
       if (!window.botpress || mvpAssistantInitialized) return;
       mvpAssistantInitialized = true;
@@ -1065,7 +1107,7 @@
       });
     }
     function assistant() {
-      layout(`<section class="grid"><div class="notice">Entrenador MVP responde únicamente con la información validada del proyecto MVP Burgers.</div><div class="voice-toolbar"><span id="voice-status" class="voice-status">Voz desactivada.</span><div class="actions"><button id="voice-toggle" type="button" onclick="toggleMvpVoice()">🔊 Activar voz</button><button class="secondary" type="button" onclick="repeatMvpResponse()">↻ Repetir última respuesta</button><button class="secondary" type="button" onclick="stopMvpVoice()">■ Detener</button></div></div><div class="chat-shell"><div id="webchat-container" aria-label="Chat de Entrenador MVP"></div></div></section>`);
+      layout(`<section class="grid"><div class="notice">Entrenador MVP responde únicamente con la información validada del proyecto MVP Burgers.</div><div class="voice-toolbar"><span id="voice-status" class="voice-status">Voz desactivada.</span><div class="actions"><button id="voice-toggle" type="button" onclick="toggleMvpVoice()">🔊 Activar voz</button><button class="secondary" type="button" onclick="testMvpVoice()">▶ Probar sonido</button><button class="secondary" type="button" onclick="repeatMvpResponse()">↻ Repetir respuesta</button><button class="secondary" type="button" onclick="stopMvpVoice()">■ Detener</button></div></div><div class="chat-shell"><div id="webchat-container" aria-label="Chat de Entrenador MVP"></div></div></section>`);
       updateVoiceStatus();
       initMvpAssistant();
       if (mvpAssistantInitialized && window.botpress && window.botpress.open) window.botpress.open();
